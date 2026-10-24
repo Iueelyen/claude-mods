@@ -1,0 +1,8 @@
+{
+  "name": "mod-menu",
+  "version": "0.2.0",
+  "description": "A Mods control panel (/mods): pick a mod on the left, switch it and its options on the right.",
+  "author": { "name": "Chris Norman" },
+  "license": "MIT",
+  "types": "./types/index.d.ts"
+}

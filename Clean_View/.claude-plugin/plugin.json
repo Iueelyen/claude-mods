@@ -1,0 +1,8 @@
+{
+  "name": "clean-view",
+  "version": "0.1.0",
+  "description": "Hides the technical rows while Claude works and shows one plain checklist above the prompt.",
+  "author": { "name": "Chris Norman" },
+  "license": "MIT",
+  "types": "./types/index.d.ts"
+}

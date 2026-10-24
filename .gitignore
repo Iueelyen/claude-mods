@@ -1,0 +1,12 @@
+# Written by Claude Code when it loads a mod
+.claude-plugin/types/
+*/.claude-plugin/types/
+.mcpb-cache/
+
+# Operating system and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
+*.swp
+*.log
