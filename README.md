@@ -11,7 +11,7 @@ Mods for [Claude Code](https://claude.com/claude-code) that make it calmer and f
 
 ## Install
 
-Install once on each computer. After that, every new Claude Code session loads the mods by itself.
+Install once on each computer. After that, every new Claude Code session loads the mods by itself. For a step-by-step guide to setting up another PC, see [Install All Mods](Install%20All%20Mods.md).
 
 **In a Claude Code terminal session**, type each line at the prompt, answer `y` to add the marketplace, then pick the user scope:
 
