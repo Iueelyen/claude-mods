@@ -4,7 +4,7 @@ import type { EngineInterface, On } from 'claude-code'
 type Dollar = EngineInterface
 
 const PANE = 'mod-menu'
-const VERSION = '0.2.0'
+const VERSION = '0.2.1'
 
 const COLOR = {
   gold: '#F2C46D',
@@ -84,6 +84,17 @@ async function readMods($: Dollar): Promise<ModRow[]> {
       offArgs: 'disable',
       isOn: asSwitch(await $.state.get({ plugin: 'prompt-upgrade', key: 'isEnabled' })),
       options: asOptions(await $.state.get({ plugin: 'prompt-upgrade', key: 'options' })),
+    },
+    {
+      id: 'usage-meter',
+      title: 'Usage Meter',
+      summary: 'Shows your 5-hour and weekly plan usage as small bars under the prompt, with the time the 5-hour limit resets.',
+      commands: ['/meter', '/meter set'],
+      command: 'meter',
+      onArgs: 'on',
+      offArgs: 'off',
+      isOn: asSwitch(await $.state.get({ plugin: 'usage-meter', key: 'isEnabled' })),
+      options: asOptions(await $.state.get({ plugin: 'usage-meter', key: 'options' })),
     },
     {
       id: 'mod-menu',

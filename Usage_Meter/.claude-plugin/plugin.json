@@ -1,0 +1,8 @@
+{
+  "name": "usage-meter",
+  "version": "0.1.0",
+  "description": "Shows your 5-hour and weekly plan usage as small bars under the prompt, with the 5-hour reset time.",
+  "author": { "name": "Chris Norman" },
+  "license": "MIT",
+  "types": "./types/index.d.ts"
+}

@@ -6,6 +6,7 @@ Mods for [Claude Code](https://claude.com/claude-code) that make it calmer and f
 |---|---|---|
 | **Clean View** (`clean-view`) | While Claude works, hides tool calls, file changes and command output, and shows one plain checklist above the prompt. | `/simple`, `/simple set` |
 | **Prompt Upgrade** (`prompt-upgrade`) | Turns a rough prompt into a great one: a few quick questions, a rewrite, and a side-by-side review. Nothing is sent until you press Run it. | `/better`, `/better history`, `/better set` |
+| **Usage Meter** (`usage-meter`) | Shows your 5-hour and weekly plan usage as small bars under the prompt, with the time the 5-hour limit resets. | `/meter`, `/meter set` |
 | **Mods menu** (`mod-menu`) | A control panel: switch each mod on or off and change its options. | `/mods` |
 
 ## Install
@@ -17,6 +18,7 @@ Install once on each computer. After that, every new Claude Code session loads t
 ```
 /plugin install clean-view --marketplace Iueelyen/claude-mods
 /plugin install prompt-upgrade --marketplace Iueelyen/claude-mods
+/plugin install usage-meter --marketplace Iueelyen/claude-mods
 /plugin install mod-menu --marketplace Iueelyen/claude-mods
 ```
 
@@ -25,6 +27,7 @@ Install once on each computer. After that, every new Claude Code session loads t
 ```
 claude plugin install clean-view --marketplace Iueelyen/claude-mods
 claude plugin install prompt-upgrade --marketplace Iueelyen/claude-mods
+claude plugin install usage-meter --marketplace Iueelyen/claude-mods
 claude plugin install mod-menu --marketplace Iueelyen/claude-mods
 ```
 
@@ -39,7 +42,7 @@ Claude Code reads the newest version from this repository. To get it right away,
 ## Layout
 
 - `.claude-plugin/marketplace.json`: the list of mods this repository offers
-- `Clean_View/`, `Prompt_Upgrade/`, `Mods_Menu/`: one folder per mod, each with its own README
+- `Clean_View/`, `Prompt_Upgrade/`, `Usage_Meter/`, `Mods_Menu/`: one folder per mod, each with its own README
 - Each mod's tests run with `claude plugin test <mod folder>`
 
 ## License
