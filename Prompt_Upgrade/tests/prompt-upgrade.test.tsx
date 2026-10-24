@@ -293,3 +293,18 @@ test('options: clear history', async ($, on) => {
   expect((await $.command.run({ command: 'better', args: 'set history clear' })).text).toBe('Prompt Upgrade: history cleared.')
   expect((await $.command.run({ command: 'better', args: 'history' })).text).toBe('No upgrades yet.')
 })
+
+test('version: published for the Mods menu, and /better version says it, even while off', async ($, on) => {
+  const published: Record<string, unknown> = {}
+  on('state.set', (_, e, next) => {
+    const w = e as { plugin: string; key: string; value: unknown }
+    if (w.plugin === 'prompt-upgrade') published[w.key] = w.value
+    return next(e)
+  })
+  const { clock, seen } = await boot($, on)
+  expect(published.version).toBe('0.1.1')
+  await $.command.run({ command: 'better', args: 'disable' })
+  expect((await $.command.run({ command: 'better', args: 'version' })).text).toBe('Prompt Upgrade version 0.1.1')
+  await clock.settle()
+  expect(seen.models).toEqual([]) // "version" is never taken as a prompt to upgrade
+})

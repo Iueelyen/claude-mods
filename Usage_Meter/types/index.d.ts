@@ -37,6 +37,8 @@ export type UsageMeterOption = {
 declare module 'claude-code' {
   interface PluginState {
     'usage-meter': {
+      /** This mod's version, as its plugin.json states it. */
+      version: string
       isEnabled: boolean
       settings: UsageMeterSettings
       options: UsageMeterOption[]

@@ -23,6 +23,7 @@ import {
 type Dollar = EngineInterface
 
 const PANE = 'prompt-upgrade'
+const VERSION = '0.1.1' // keep in step with .claude-plugin/plugin.json
 const STORE_ENABLED = 'isEnabled'
 const STORE_AUTO = 'autoMode'
 const STORE_HISTORY = 'history'
@@ -40,6 +41,7 @@ const COLOR = {
   ink: '#0D1117',
 } as const
 
+const versionAtom = atom({ plugin: 'prompt-upgrade', key: 'version' } as const, VERSION)
 const flowAtom = atom({ plugin: 'prompt-upgrade', key: 'flow' } as const, null)
 const enabledAtom = atom({ plugin: 'prompt-upgrade', key: 'isEnabled' } as const, true)
 const autoAtom = atom({ plugin: 'prompt-upgrade', key: 'autoMode' } as const, false)
@@ -355,6 +357,7 @@ function trackerIndex(flow: UpgradeFlow): number {
 
 export function registerPromptUpgrade(on: On): void {
   on('session.start', async ($, e, next) => {
+    await update($, versionAtom, () => VERSION)
     const enabled = await $.store.get(STORE_ENABLED)
     const auto = await $.store.get(STORE_AUTO)
     const history = await $.store.get(STORE_HISTORY)
@@ -367,7 +370,7 @@ export function registerPromptUpgrade(on: On): void {
     await $.command.register({
       name: 'better',
       description: 'Upgrade a rough prompt before sending it (on, off, history, enable, disable)',
-      argumentHint: '<prompt> | on | off | history | enable | disable | set <option> <value>',
+      argumentHint: '<prompt> | on | off | history | enable | disable | set <option> <value> | version',
     })
 
     // Reloaded mid-step: pick the step back up.
@@ -386,6 +389,7 @@ export function registerPromptUpgrade(on: On): void {
   on('command.run', { command: 'better' }, async ($, e) => {
     const arg = e.args.trim()
     const word = arg.toLowerCase()
+    if (word === 'version') return { text: `Prompt Upgrade version ${VERSION}` }
     // Options work whether the mod is on or off, so they can be set up first.
     const set = /^set\s+(\S+)\s+(\S+)$/.exec(word)
     if (set !== null) {

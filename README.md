@@ -42,6 +42,7 @@ Claude Code reads the newest version from this repository. To get it right away,
 ## Layout
 
 - `.claude-plugin/marketplace.json`: the list of mods this repository offers
+- `CHANGELOG.md`: each mod's versions and what changed
 - `Clean_View/`, `Prompt_Upgrade/`, `Usage_Meter/`, `Mods_Menu/`: one folder per mod, each with its own README
 - Each mod's tests run with `claude plugin test <mod folder>`
 

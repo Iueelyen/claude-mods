@@ -1,6 +1,6 @@
 {
   "name": "prompt-upgrade",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Turns a rough prompt into a great one: a few quick questions, a rewrite, and a side-by-side review before anything is sent.",
   "author": { "name": "Chris Norman" },
   "license": "MIT",

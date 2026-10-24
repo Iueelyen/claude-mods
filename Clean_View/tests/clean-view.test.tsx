@@ -202,3 +202,15 @@ test('options: hide technical rows off shows tool rows again', async ($, on) => 
   expect(await ui.find({ type: 'Text', text: /engine row/ })).toBeDefined()
   await ui.unmount()
 })
+
+test('version: published for the Mods menu, and /simple version says it', async ($, on) => {
+  const published: Record<string, unknown> = {}
+  on('state.set', (_, e, next) => {
+    const w = e as { plugin: string; key: string; value: unknown }
+    if (w.plugin === 'clean-view') published[w.key] = w.value
+    return next(e)
+  })
+  await startJob($, on)
+  expect(published.version).toBe('0.1.1')
+  expect((await $.command.run({ command: 'simple', args: 'version' })).text).toBe('Clean View version 0.1.1')
+})

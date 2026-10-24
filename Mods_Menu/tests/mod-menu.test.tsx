@@ -281,3 +281,21 @@ test('no Button carries colour inside it, so a desktop draws every colour', asyn
     await ui.unmount()
   }
 })
+
+test('versions: each mod\'s published version shows by its name, the menu shows its own', async ($, on) => {
+  const published = installed()
+  published['clean-view']!.version = '0.1.1'
+  await boot($, on, published)
+  expect((await $.command.run({ command: 'mods', args: 'version' })).text).toBe('Mods menu version 0.3.0')
+  for (const surface of ['terminal', 'desktop'] as const) {
+    const ui = await draw($, surface) // Clean View, the first installed mod, is selected
+    expect(await allText(ui)).toMatch(/Clean View · v0\.1\.1/)
+    // A mod that publishes no version shows none, rather than a wrong one.
+    await ui.press({ key: 'pick-prompt-upgrade' })
+    expect(await allText(ui)).not.toMatch(/Prompt Upgrade · v/)
+    await ui.press({ key: 'pick-mod-menu' })
+    expect(await allText(ui)).toMatch(/Mods menu · v0\.3\.0/)
+    await ui.press({ key: 'pick-clean-view' })
+    await ui.unmount()
+  }
+})

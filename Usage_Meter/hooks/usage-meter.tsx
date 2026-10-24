@@ -6,6 +6,8 @@ import type { UsageMeterOption, UsageMeterReading, UsageMeterSettings, UsageMete
 type Dollar = EngineInterface
 
 // Shared state (see types/index.d.ts): the Mods menu reads `isEnabled` and `options`.
+const VERSION = '0.1.1' // keep in step with .claude-plugin/plugin.json
+const versionAtom = atom({ plugin: 'usage-meter', key: 'version' } as const, VERSION)
 const enabledAtom = atom({ plugin: 'usage-meter', key: 'isEnabled' } as const, true)
 const settingsAtom = atom({ plugin: 'usage-meter', key: 'settings' } as const, { colours: true, warn: true })
 const optionsAtom = atom({ plugin: 'usage-meter', key: 'options' } as const, [])
@@ -165,6 +167,7 @@ async function take($: Dollar, limits: readonly SessionRateLimit[]): Promise<voi
 
 export function registerUsageMeter(on: On): void {
   on('session.start', async ($, e, next) => {
+    await update($, versionAtom, () => VERSION)
     const saved = await $.store.get(STORE_ENABLED)
     await update($, enabledAtom, () => (typeof saved === 'boolean' ? saved : true))
     const settings = asSettings(await $.store.get(STORE_SETTINGS))
@@ -173,7 +176,7 @@ export function registerUsageMeter(on: On): void {
     await $.command.register({
       name: 'meter',
       description: 'Turn Usage Meter on or off (no argument flips it)',
-      argumentHint: 'on | off | set <option> <value>',
+      argumentHint: 'on | off | set <option> <value> | version',
     })
     await take($, (await $.session.usage()).rateLimits)
     return next(e)
@@ -189,6 +192,7 @@ export function registerUsageMeter(on: On): void {
 
   on('command.run', { command: 'meter' }, async ($, e) => {
     const arg = e.args.trim().toLowerCase()
+    if (arg === 'version') return { text: `Usage Meter version ${VERSION}` }
     const set = /^set\s+(\S+)\s+(\S+)$/.exec(arg)
     if (set !== null) {
       const next = applySetting(await read($, settingsAtom), set[1]!, set[2]!)

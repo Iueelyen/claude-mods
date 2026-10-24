@@ -83,3 +83,10 @@ test('6. passing 90% warns once, and not when warnings are off', async ($, on) =
   await $.session.measure({ context: { window: 200000 }, rateLimits: weekHigh, changed: ['rateLimits'] })
   expect(seen.toasts).toHaveLength(1)
 })
+
+test('7. version: published for the Mods menu, and /meter version says it', async ($, on) => {
+  const seen = engine(on, LIMITS)
+  await $.session.start({ cwd: '/', surface: 'terminal', isInteractive: true })
+  expect(seen.state.version).toBe('0.1.1')
+  expect((await $.command.run({ command: 'meter', args: 'version' })).text).toBe('Usage Meter version 0.1.1')
+})

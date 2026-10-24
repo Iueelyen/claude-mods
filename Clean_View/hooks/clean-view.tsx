@@ -6,6 +6,8 @@ import type { CleanViewChecklist, CleanViewOption, CleanViewSettings, CleanViewT
 // ---------------------------------------------------------------------------
 // Shared state (see types/index.d.ts): other mods may read these.
 
+const VERSION = '0.1.1' // keep in step with .claude-plugin/plugin.json
+const versionAtom = atom({ plugin: 'clean-view', key: 'version' } as const, VERSION)
 const enabledAtom = atom({ plugin: 'clean-view', key: 'cleanViewEnabled' } as const, true)
 const tickAtom = atom({ plugin: 'clean-view', key: 'tick' } as const, 0)
 const EMPTY: CleanViewChecklist = {
@@ -332,6 +334,7 @@ export function registerCleanView(on: On): void {
   // -- Session start: tools, command, saved setting --------------------------
 
   on('session.start', async ($, e, next) => {
+    await update($, versionAtom, () => VERSION)
     const saved = await $.store.get(STORE_KEY)
     await update($, enabledAtom, () => (typeof saved === 'boolean' ? saved : true))
     const settings = asSettings(await $.store.get(STORE_SETTINGS))
@@ -362,7 +365,7 @@ export function registerCleanView(on: On): void {
     await $.command.register({
       name: 'simple',
       description: 'Turn Clean View on or off (no argument flips it)',
-      argumentHint: 'on | off | set <option> <value>',
+      argumentHint: 'on | off | set <option> <value> | version',
     })
     syncTicker($, await read($, checklistAtom))
 
@@ -721,6 +724,7 @@ export function registerCleanView(on: On): void {
 
   on('command.run', { command: 'simple' }, async ($, e) => {
     const arg = e.args.trim().toLowerCase()
+    if (arg === 'version') return { text: `Clean View version ${VERSION}` }
     const set = /^set\s+(\S+)\s+(\S+)$/.exec(arg)
     if (set !== null) {
       const next = applySetting(await read($, settingsAtom), set[1]!, set[2]!)

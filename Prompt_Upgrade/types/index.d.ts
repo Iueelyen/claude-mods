@@ -71,6 +71,8 @@ export type UpgradeOption = {
 declare module 'claude-code' {
   interface PluginState {
     'prompt-upgrade': {
+      /** This mod's version, as its plugin.json states it. */
+      version: string
       flow: UpgradeFlow | null
       /** The whole mod's switch: off, nothing is intercepted and /better only says how to turn it on. */
       isEnabled: boolean

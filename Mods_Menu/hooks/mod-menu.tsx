@@ -4,7 +4,7 @@ import type { EngineInterface, On } from 'claude-code'
 type Dollar = EngineInterface
 
 const PANE = 'mod-menu'
-const VERSION = '0.2.1'
+const VERSION = '0.3.0' // keep in step with .claude-plugin/plugin.json
 
 const COLOR = {
   gold: '#F2C46D',
@@ -47,12 +47,18 @@ type ModRow = {
   onArgs: string
   offArgs: string
   isOn: boolean | undefined
+  /** The version the mod publishes; undefined when it isn't loaded or doesn't say. */
+  version: string | undefined
   options: ModOption[]
 }
 
 /** A value a mod never wrote (version 0) means that mod isn't loaded here. */
 function asSwitch(held: { value?: unknown; version: number }): boolean | undefined {
   return held.version === 0 ? undefined : held.value === true
+}
+
+function asVersion(held: { value?: unknown }): string | undefined {
+  return typeof held.value === 'string' && held.value !== '' ? held.value : undefined
 }
 
 function asOptions(held: { value?: unknown }): ModOption[] {
@@ -72,6 +78,7 @@ async function readMods($: Dollar): Promise<ModRow[]> {
       onArgs: 'on',
       offArgs: 'off',
       isOn: asSwitch(await $.state.get({ plugin: 'clean-view', key: 'cleanViewEnabled' })),
+      version: asVersion(await $.state.get({ plugin: 'clean-view', key: 'version' })),
       options: asOptions(await $.state.get({ plugin: 'clean-view', key: 'options' })),
     },
     {
@@ -83,6 +90,7 @@ async function readMods($: Dollar): Promise<ModRow[]> {
       onArgs: 'enable',
       offArgs: 'disable',
       isOn: asSwitch(await $.state.get({ plugin: 'prompt-upgrade', key: 'isEnabled' })),
+      version: asVersion(await $.state.get({ plugin: 'prompt-upgrade', key: 'version' })),
       options: asOptions(await $.state.get({ plugin: 'prompt-upgrade', key: 'options' })),
     },
     {
@@ -94,17 +102,19 @@ async function readMods($: Dollar): Promise<ModRow[]> {
       onArgs: 'on',
       offArgs: 'off',
       isOn: asSwitch(await $.state.get({ plugin: 'usage-meter', key: 'isEnabled' })),
+      version: asVersion(await $.state.get({ plugin: 'usage-meter', key: 'version' })),
       options: asOptions(await $.state.get({ plugin: 'usage-meter', key: 'options' })),
     },
     {
       id: 'mod-menu',
       title: 'Mods menu',
-      summary: `This control panel. It switches your mods and their options; each mod keeps its own settings. Version ${VERSION}.`,
+      summary: 'This control panel. It switches your mods and their options; each mod keeps its own settings.',
       commands: ['/mods'],
       command: null,
       onArgs: '',
       offArgs: '',
       isOn: true,
+      version: VERSION,
       options: [],
     },
   ]
@@ -182,7 +192,8 @@ export function registerModMenu(on: On): void {
     return next(e)
   })
 
-  on('command.run', { command: 'mods' }, async $ => {
+  on('command.run', { command: 'mods' }, async ($, e) => {
+    if (e.args.trim().toLowerCase() === 'version') return { text: `Mods menu version ${VERSION}` }
     $.clock.after(0, () => {
       void openMenu($).catch(() => undefined)
     })
@@ -286,8 +297,16 @@ export function registerModMenu(on: On): void {
       )
     right.push(
       <Box flexDirection="row" width={rightWidth} justifyContent="space-between">
-        <Text color={COLOR.gold} bold>
-          {fit(current.title, Math.max(4, rightWidth - 14))}
+        <Text wrap="truncate-end">
+          <Text color={COLOR.gold} bold>
+            {fit(current.title, Math.min(current.title.length, Math.max(4, rightWidth - 14)))}
+          </Text>
+          <Text color={COLOR.muted}>
+            {fit(
+              current.version === undefined ? '' : ` · v${current.version}`,
+              Math.max(0, rightWidth - 14 - current.title.length),
+            )}
+          </Text>
         </Text>
         {switchCell}
       </Box>,

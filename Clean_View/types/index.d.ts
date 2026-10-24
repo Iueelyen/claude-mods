@@ -58,6 +58,8 @@ export type CleanViewOption = {
 declare module 'claude-code' {
   interface PluginState {
     'clean-view': {
+      /** This mod's version, as its plugin.json states it. */
+      version: string
       cleanViewEnabled: boolean
       checklist: CleanViewChecklist
       tick: number
