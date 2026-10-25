@@ -4,7 +4,7 @@ import type { EngineInterface, On } from 'claude-code'
 type Dollar = EngineInterface
 
 const PANE = 'mod-menu'
-const VERSION = '0.3.0' // keep in step with .claude-plugin/plugin.json
+const VERSION = '0.3.1' // keep in step with .claude-plugin/plugin.json
 
 const COLOR = {
   gold: '#F2C46D',
@@ -104,6 +104,18 @@ async function readMods($: Dollar): Promise<ModRow[]> {
       isOn: asSwitch(await $.state.get({ plugin: 'usage-meter', key: 'isEnabled' })),
       version: asVersion(await $.state.get({ plugin: 'usage-meter', key: 'version' })),
       options: asOptions(await $.state.get({ plugin: 'usage-meter', key: 'options' })),
+    },
+    {
+      id: 'reflect',
+      title: 'Reflect',
+      summary: 'When you correct Claude in a lasting way, offers to save it as a rule for this project, all your projects, or a skill.',
+      commands: ['/reflect', '/reflect set'],
+      command: 'reflect',
+      onArgs: 'on',
+      offArgs: 'off',
+      isOn: asSwitch(await $.state.get({ plugin: 'reflect', key: 'isEnabled' })),
+      version: asVersion(await $.state.get({ plugin: 'reflect', key: 'version' })),
+      options: asOptions(await $.state.get({ plugin: 'reflect', key: 'options' })),
     },
     {
       id: 'mod-menu',

@@ -211,6 +211,20 @@ test('version: published for the Mods menu, and /simple version says it', async 
     return next(e)
   })
   await startJob($, on)
-  expect(published.version).toBe('0.1.1')
-  expect((await $.command.run({ command: 'simple', args: 'version' })).text).toBe('Clean View version 0.1.1')
+  expect(published.version).toBe('0.1.2')
+  expect((await $.command.run({ command: 'simple', args: 'version' })).text).toBe('Clean View version 0.1.2')
+})
+
+test('another mod\'s band (Reflect\'s offer, say) shows under the checklist', async ($, on) => {
+  // Stands for whatever draws beneath Clean View in the band.
+  on('ui.render', ($, e) => {
+    const { Text } = $.ui.resolve(e)
+    return <Text>Save as a rule?</Text>
+  })
+  await startJob($, on)
+  await $.tool.call({ tool: PLAN, steps: ['Build the page', 'Check the page'] })
+  for (const surface of ['terminal', 'desktop'] as const) {
+    const all = (await texts($, surface)).join('\n')
+    expect(all).toMatch(/Build the page[\s\S]*Save as a rule\?/)
+  }
 })

@@ -286,7 +286,7 @@ test('versions: each mod\'s published version shows by its name, the menu shows 
   const published = installed()
   published['clean-view']!.version = '0.1.1'
   await boot($, on, published)
-  expect((await $.command.run({ command: 'mods', args: 'version' })).text).toBe('Mods menu version 0.3.0')
+  expect((await $.command.run({ command: 'mods', args: 'version' })).text).toBe('Mods menu version 0.3.1')
   for (const surface of ['terminal', 'desktop'] as const) {
     const ui = await draw($, surface) // Clean View, the first installed mod, is selected
     expect(await allText(ui)).toMatch(/Clean View · v0\.1\.1/)
@@ -294,7 +294,44 @@ test('versions: each mod\'s published version shows by its name, the menu shows 
     await ui.press({ key: 'pick-prompt-upgrade' })
     expect(await allText(ui)).not.toMatch(/Prompt Upgrade · v/)
     await ui.press({ key: 'pick-mod-menu' })
-    expect(await allText(ui)).toMatch(/Mods menu · v0\.3\.0/)
+    expect(await allText(ui)).toMatch(/Mods menu · v0\.3\.1/)
+    await ui.press({ key: 'pick-clean-view' })
+    await ui.unmount()
+  }
+})
+
+test('Reflect is listed with its switch, options and version', async ($, on) => {
+  const published = installed()
+  published['reflect'] = {
+    isEnabled: true,
+    version: '0.1.0',
+    options: [
+      {
+        key: 'suggest',
+        label: 'Suggest first',
+        kind: 'choice',
+        value: 'auto',
+        group: 'Behavior',
+        choices: [
+          { value: 'auto', label: 'Auto' },
+          { value: 'project', label: 'This project' },
+          { value: 'everywhere', label: 'All projects' },
+        ],
+      },
+    ],
+  }
+  const { runs } = await boot($, on, published)
+  for (const surface of ['terminal', 'desktop'] as const) {
+    runs.length = 0
+    const ui = await draw($, surface)
+    await ui.press({ key: 'pick-reflect' })
+    const text = await allText(ui)
+    expect(text).toMatch(/Reflect · v0\.1\.0/)
+    expect(text).toMatch(/Suggest first/)
+    expect(text).toMatch(/Commands: \/reflect, \/reflect set/)
+    await ui.press({ key: 'switch-reflect-off' })
+    await ui.press({ key: 'opt-reflect-suggest-project' })
+    expect(runs).toEqual(['/reflect off', '/reflect set suggest project'])
     await ui.press({ key: 'pick-clean-view' })
     await ui.unmount()
   }

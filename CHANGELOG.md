@@ -2,9 +2,12 @@
 
 Every change to a mod raises its version (in its `.claude-plugin/plugin.json` and the `VERSION` line in its code) and adds a line here. Newest first.
 
-To see which version a PC is running: open `/mods` (the version shows next to each mod's name), or type `/simple version`, `/better version`, `/meter version` or `/mods version`.
+To see which version a PC is running: open `/mods` (the version shows next to each mod's name), or type `/simple version`, `/better version`, `/meter version`, `/reflect version` or `/mods version`.
 
 ## Clean View (`clean-view`)
+
+### 0.1.2 (2026-10-24)
+- Other mods' bands above the prompt (such as Reflect's offer) now show under the checklist instead of being hidden.
 
 ### 0.1.1 (2026-10-24)
 - Reports its version to the Mods menu; `/simple version` shows it.
@@ -31,7 +34,16 @@ To see which version a PC is running: open `/mods` (the version shows next to ea
 - First release: 5-hour and weekly usage bars under the prompt, with the 5-hour reset time; `/meter on|off`.
 - Options (in `/mods` or `/meter set`): warning colours, pop-up near the limit.
 
+## Reflect (`reflect`)
+
+### 0.1.0 (2026-10-24)
+- First release, written fresh: when you correct Claude in a lasting way, offers to save it as a rule in this project's CLAUDE.md, your all-projects CLAUDE.md, or a skill. Won't save the same rule twice. `/reflect on|off`, `/reflect version`, listed in `/mods` with its version.
+- Options (in `/mods` or `/reflect set`): suggest first, show skill buttons.
+
 ## Mods menu (`mod-menu`)
+
+### 0.3.1 (2026-10-24)
+- Lists Reflect, with its switch, options and version.
 
 ### 0.3.0 (2026-10-24)
 - Shows each mod's version next to its name; `/mods version` shows the menu's own.

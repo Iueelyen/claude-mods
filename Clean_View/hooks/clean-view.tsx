@@ -6,7 +6,7 @@ import type { CleanViewChecklist, CleanViewOption, CleanViewSettings, CleanViewT
 // ---------------------------------------------------------------------------
 // Shared state (see types/index.d.ts): other mods may read these.
 
-const VERSION = '0.1.1' // keep in step with .claude-plugin/plugin.json
+const VERSION = '0.1.2' // keep in step with .claude-plugin/plugin.json
 const versionAtom = atom({ plugin: 'clean-view', key: 'version' } as const, VERSION)
 const enabledAtom = atom({ plugin: 'clean-view', key: 'cleanViewEnabled' } as const, true)
 const tickAtom = atom({ plugin: 'clean-view', key: 'tick' } as const, 0)
@@ -597,13 +597,12 @@ export function registerCleanView(on: On): void {
     const now = await $.clock.now()
     const columns = Math.max(20, e.props.bodyColumns)
 
+    // Whatever other mods draw here (Reflect's offer, say) goes under the checklist.
     let below: Awaited<ReturnType<typeof next>> | undefined
-    if (!enabled) {
-      try {
-        below = await next(e)
-      } catch {
-        below = undefined
-      }
+    try {
+      below = await next(e)
+    } catch {
+      below = undefined
     }
 
     const button = (
@@ -716,6 +715,7 @@ export function registerCleanView(on: On): void {
       <Box flexDirection="column" width={columns}>
         {headerRow}
         {rows}
+        {below}
       </Box>
     )
   })

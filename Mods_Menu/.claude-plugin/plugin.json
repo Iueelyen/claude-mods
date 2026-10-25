@@ -1,6 +1,6 @@
 {
   "name": "mod-menu",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A Mods control panel (/mods): pick a mod on the left, switch it and its options on the right.",
   "author": { "name": "Chris Norman" },
   "license": "MIT",

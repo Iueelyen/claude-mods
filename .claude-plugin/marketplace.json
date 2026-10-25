@@ -1,11 +1,12 @@
 {
   "name": "claude-mods",
-  "description": "Mods that make Claude Code calmer and friendlier: Clean View, Prompt Upgrade, Usage Meter and a Mods control panel.",
+  "description": "Mods that make Claude Code calmer and friendlier: Clean View, Prompt Upgrade, Usage Meter, Reflect and a Mods control panel.",
   "owner": { "name": "Chris Norman" },
   "plugins": [
     { "name": "clean-view", "source": "./Clean_View" },
     { "name": "prompt-upgrade", "source": "./Prompt_Upgrade" },
     { "name": "usage-meter", "source": "./Usage_Meter" },
+    { "name": "reflect", "source": "./Reflect" },
     { "name": "mod-menu", "source": "./Mods_Menu" }
   ]
 }
