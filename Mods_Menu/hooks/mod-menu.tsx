@@ -4,7 +4,7 @@ import type { EngineInterface, On } from 'claude-code'
 type Dollar = EngineInterface
 
 const PANE = 'mod-menu'
-const VERSION = '0.3.3' // keep in step with .claude-plugin/plugin.json
+const VERSION = '0.3.4' // keep in step with .claude-plugin/plugin.json
 
 const COLOR = {
   gold: '#F2C46D',
@@ -50,6 +50,8 @@ type ModRow = {
   /** The version the mod publishes; undefined when it isn't loaded or doesn't say. */
   version: string | undefined
   options: ModOption[]
+  /** Commands the mod holds, each with what it does: drawn as a COMMANDS section. */
+  commandList?: Array<{ name: string; description: string }>
 }
 
 /** A value a mod never wrote (version 0) means that mod isn't loaded here. */
@@ -65,6 +67,14 @@ function asVersion(held: { value?: unknown }): string | undefined {
 function asCommandList(control: string, held: { value?: unknown }): string[] {
   const list = Array.isArray(held.value) ? (held.value as Array<{ name?: unknown }>) : []
   return [control, ...list.filter(c => typeof c.name === 'string').map(c => `/${String(c.name)}`)]
+}
+
+/** A mod's published commands with their descriptions, for the COMMANDS section. */
+function asCommandDetails(held: { value?: unknown }): Array<{ name: string; description: string }> {
+  const list = Array.isArray(held.value) ? (held.value as Array<{ name?: unknown; description?: unknown }>) : []
+  return list
+    .filter(c => typeof c.name === 'string')
+    .map(c => ({ name: String(c.name), description: typeof c.description === 'string' ? c.description : '' }))
 }
 
 function asOptions(held: { value?: unknown }): ModOption[] {
@@ -146,6 +156,7 @@ async function readMods($: Dollar): Promise<ModRow[]> {
       isOn: asSwitch(await $.state.get({ plugin: 'my-commands', key: 'isEnabled' })),
       version: asVersion(await $.state.get({ plugin: 'my-commands', key: 'version' })),
       options: asOptions(await $.state.get({ plugin: 'my-commands', key: 'options' })),
+      commandList: asCommandDetails(await $.state.get({ plugin: 'my-commands', key: 'commands' })),
     },
     {
       id: 'mod-menu',
@@ -360,6 +371,26 @@ export function registerModMenu(on: On): void {
       right.push(<Text color={COLOR.text}>{fit('This mod isn’t installed on this computer.', rightWidth)}</Text>)
     } else if (current.isOn === false && current.options.length > 0) {
       right.push(<Text color={COLOR.muted}>{fit(`${current.title} is off. These apply when it’s on.`, rightWidth)}</Text>)
+    }
+
+    // Each command with what it does: the name in gold, the description wrapped beside it.
+    const commandList = current.isOn === undefined ? [] : (current.commandList ?? [])
+    if (commandList.length > 0) {
+      right.push(heading('Commands', rightWidth))
+      const nameWidth = Math.min(Math.max(...commandList.map(c => c.name.length + 1)) + 2, Math.floor(rightWidth / 3))
+      const descWidth = Math.max(8, rightWidth - nameWidth)
+      for (const c of commandList) {
+        const lines = wrapLines(c.description, descWidth)
+        right.push(
+          <Text wrap="truncate-end">
+            <Text color={COLOR.gold} bold>
+              {fit(`/${c.name}`, nameWidth)}
+            </Text>
+            <Text color={COLOR.text}>{lines[0] ?? ''}</Text>
+          </Text>,
+        )
+        for (const line of lines.slice(1)) right.push(<Text color={COLOR.text}>{`${' '.repeat(nameWidth)}${line}`}</Text>)
+      }
     }
 
     const labelWidth = Math.min(22, Math.max(10, Math.floor(rightWidth * 0.4)))

@@ -286,7 +286,7 @@ test('versions: each mod\'s published version shows by its name, the menu shows 
   const published = installed()
   published['clean-view']!.version = '0.1.1'
   await boot($, on, published)
-  expect((await $.command.run({ command: 'mods', args: 'version' })).text).toBe('Mods menu version 0.3.3')
+  expect((await $.command.run({ command: 'mods', args: 'version' })).text).toBe('Mods menu version 0.3.4')
   for (const surface of ['terminal', 'desktop'] as const) {
     const ui = await draw($, surface) // Clean View, the first installed mod, is selected
     expect(await allText(ui)).toMatch(/Clean View · v0\.1\.1/)
@@ -294,7 +294,7 @@ test('versions: each mod\'s published version shows by its name, the menu shows 
     await ui.press({ key: 'pick-prompt-upgrade' })
     expect(await allText(ui)).not.toMatch(/Prompt Upgrade · v/)
     await ui.press({ key: 'pick-mod-menu' })
-    expect(await allText(ui)).toMatch(/Mods menu · v0\.3\.3/)
+    expect(await allText(ui)).toMatch(/Mods menu · v0\.3\.4/)
     await ui.press({ key: 'pick-clean-view' })
     await ui.unmount()
   }
@@ -373,7 +373,35 @@ test('My Commands is listed with its version and the commands it holds', async (
   const text = await allText(ui)
   expect(text).toMatch(/My Commands · v0\.1\.0/)
   expect(text).toMatch(/Commands: \/mycommands, \/todo, \/wrapup/)
+  // The COMMANDS section: each command, then what it does.
+  expect(text).toMatch(/COMMANDS[\s\S]*\/todo +Show what is left to do[\s\S]*\/wrapup +End-of-session wrap-up/)
   await ui.press({ key: 'switch-my-commands-off' })
   expect(runs).toEqual(['/mycommands off'])
   await ui.unmount()
+})
+
+test('a long command description wraps under itself and every row fits', async ($, on) => {
+  const published = installed()
+  published['my-commands'] = {
+    isEnabled: true,
+    version: '0.1.0',
+    options: [],
+    commands: [
+      {
+        name: 'wrapup',
+        description:
+          "End-of-session wrap-up - save rules, progress and notes, commit to git if there's a repository, then say it's safe to /clear",
+      },
+    ],
+  }
+  await boot($, on, published)
+  for (const columns of [40, 100]) {
+    const ui = await draw($, 'terminal', columns)
+    await ui.press({ key: 'pick-my-commands' })
+    const texts = (await ui.findAll({ type: 'Text' })).map(t => t.text)
+    expect(texts.join('\n')).toMatch(/End-of-session wrap-up[\s\S]*to \/clear/) // the whole description, wrapped
+    for (const t of texts) for (const line of t.split('\n')) expect(line.length <= columns).toBe(true)
+    await ui.press({ key: 'pick-clean-view' })
+    await ui.unmount()
+  }
 })

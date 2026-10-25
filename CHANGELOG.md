@@ -56,6 +56,9 @@ To see which version a PC is running: open `/mods` (the version shows next to ea
 
 ## Mods menu (`mod-menu`)
 
+### 0.3.4 (2026-10-24)
+- My Commands' settings now list each command with what it does (a COMMANDS section, long descriptions wrapped).
+
 ### 0.3.3 (2026-10-24)
 - Lists My Commands, with its version and the commands it holds.
 
