@@ -1,0 +1,8 @@
+{
+  "name": "my-commands",
+  "version": "0.1.0",
+  "description": "Your own slash commands (/wrapup, /todo, ...) in every chat: each is one instructions file in the library folder.",
+  "author": { "name": "Chris Norman" },
+  "license": "MIT",
+  "types": "./types/index.d.ts"
+}

@@ -21,7 +21,7 @@ import type { Where } from './logic'
 
 type Dollar = EngineInterface
 
-const VERSION = '0.1.0' // keep in step with .claude-plugin/plugin.json
+const VERSION = '0.1.1' // keep in step with .claude-plugin/plugin.json
 const STALE_MS = 30 * 60 * 1000
 const STORE_ENABLED = 'isEnabled'
 const STORE_SETTINGS = 'settings'
@@ -188,6 +188,7 @@ export function registerReflect(on: On): void {
       text: said,
       originKind: e.origin.kind,
       isAsUser: e.origin.kind === 'plugin' && (e.origin as { asUser?: boolean }).asUser === true,
+      pluginName: e.origin.kind === 'plugin' ? (e.origin as { name?: string }).name : undefined,
       hasCommand: e.command !== undefined,
       isMeta: e.isMeta === true,
     })

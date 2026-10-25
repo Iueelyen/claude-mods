@@ -2,7 +2,7 @@
 
 Every change to a mod raises its version (in its `.claude-plugin/plugin.json` and the `VERSION` line in its code) and adds a line here. Newest first.
 
-To see which version a PC is running: open `/mods` (the version shows next to each mod's name), or type `/simple version`, `/better version`, `/meter version`, `/reflect version`, `/team version` or `/mods version`.
+To see which version a PC is running: open `/mods` (the version shows next to each mod's name), or type `/simple version`, `/better version`, `/meter version`, `/reflect version`, `/team version`, `/mycommands version` or `/mods version`.
 
 ## Clean View (`clean-view`)
 
@@ -36,6 +36,9 @@ To see which version a PC is running: open `/mods` (the version shows next to ea
 
 ## Reflect (`reflect`)
 
+### 0.1.1 (2026-10-24)
+- Ignores the instructions My Commands sends (they're full of "never" and "do not" but are never a correction), so no Haiku check is spent on them.
+
 ### 0.1.0 (2026-10-24)
 - First release, written fresh: when you correct Claude in a lasting way, offers to save it as a rule in this project's CLAUDE.md, your all-projects CLAUDE.md, or a skill. Won't save the same rule twice. `/reflect on|off`, `/reflect version`, listed in `/mods` with its version.
 - Options (in `/mods` or `/reflect set`): suggest first, show skill buttons.
@@ -46,7 +49,15 @@ To see which version a PC is running: open `/mods` (the version shows next to ea
 - First release, written fresh: `/team` opens a Team pane with the job's steps (Clean View's when it runs a plan), every helper Claude sends off with its time, model, tokens and rough cost at October 2026 API prices, and a whole-job total. Status line while helpers run. `/team on|off`, `/team version`, listed in `/mods` with its version.
 - Options (in `/mods` or `/team set`): open by itself, show costs, status line.
 
+## My Commands (`my-commands`)
+
+### 0.1.0 (2026-10-24)
+- First release: your own slash commands in every chat, one instructions file each in `library/`. `/wrapup` (CLAUDE.md rules, PROGRESS.md created or updated, README if needed, commit if there's a git repository or a plain note if not, "Safe to /clear") and a general `/todo [focus]` (colour-coded tables per milestone, next sprint; creates PROGRESS.md if missing). `/mycommands list|on|off|version`, listed in `/mods` with its version and commands.
+
 ## Mods menu (`mod-menu`)
+
+### 0.3.3 (2026-10-24)
+- Lists My Commands, with its version and the commands it holds.
 
 ### 0.3.2 (2026-10-24)
 - Lists Team Tracker, with its switch, options and version.

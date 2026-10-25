@@ -4,7 +4,7 @@ import type { EngineInterface, On } from 'claude-code'
 type Dollar = EngineInterface
 
 const PANE = 'mod-menu'
-const VERSION = '0.3.2' // keep in step with .claude-plugin/plugin.json
+const VERSION = '0.3.3' // keep in step with .claude-plugin/plugin.json
 
 const COLOR = {
   gold: '#F2C46D',
@@ -59,6 +59,12 @@ function asSwitch(held: { value?: unknown; version: number }): boolean | undefin
 
 function asVersion(held: { value?: unknown }): string | undefined {
   return typeof held.value === 'string' && held.value !== '' ? held.value : undefined
+}
+
+/** A mod's published command list, as `/name` entries after its own control command. */
+function asCommandList(control: string, held: { value?: unknown }): string[] {
+  const list = Array.isArray(held.value) ? (held.value as Array<{ name?: unknown }>) : []
+  return [control, ...list.filter(c => typeof c.name === 'string').map(c => `/${String(c.name)}`)]
 }
 
 function asOptions(held: { value?: unknown }): ModOption[] {
@@ -128,6 +134,18 @@ async function readMods($: Dollar): Promise<ModRow[]> {
       isOn: asSwitch(await $.state.get({ plugin: 'team-tracker', key: 'isEnabled' })),
       version: asVersion(await $.state.get({ plugin: 'team-tracker', key: 'version' })),
       options: asOptions(await $.state.get({ plugin: 'team-tracker', key: 'options' })),
+    },
+    {
+      id: 'my-commands',
+      title: 'My Commands',
+      summary: 'Your own slash commands in every chat. Each is one instructions file in the mod; type its name to run it.',
+      commands: asCommandList('/mycommands', await $.state.get({ plugin: 'my-commands', key: 'commands' })),
+      command: 'mycommands',
+      onArgs: 'on',
+      offArgs: 'off',
+      isOn: asSwitch(await $.state.get({ plugin: 'my-commands', key: 'isEnabled' })),
+      version: asVersion(await $.state.get({ plugin: 'my-commands', key: 'version' })),
+      options: asOptions(await $.state.get({ plugin: 'my-commands', key: 'options' })),
     },
     {
       id: 'mod-menu',

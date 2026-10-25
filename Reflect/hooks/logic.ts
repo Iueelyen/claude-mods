@@ -15,6 +15,8 @@ export type CheckInput = {
   originKind: string
   /** A plugin resending the person's own words (`asUser`). */
   isAsUser: boolean
+  /** The plugin that sent it, when a plugin did. */
+  pluginName?: string
   hasCommand: boolean
   isMeta: boolean
 }
@@ -24,6 +26,8 @@ export function shouldCheck(p: CheckInput): boolean {
   if (p.hasCommand || p.isMeta) return false
   const isPersons = p.originKind === 'composer' || p.originKind === 'bridge' || (p.originKind === 'plugin' && p.isAsUser)
   if (!isPersons) return false
+  // My Commands' instructions are full of "never" and "do not", and are never a correction.
+  if (p.pluginName === 'my-commands') return false
   const text = p.text.trim()
   if (text === '' || text.startsWith('/') || text.startsWith('>')) return false
   return LASTING.test(text)

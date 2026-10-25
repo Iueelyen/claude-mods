@@ -85,6 +85,7 @@ test('which messages get the model check', () => {
   expect(shouldCheck({ ...base, text: 'never do that', originKind: 'scheduled-trigger' })).toBe(false)
   expect(shouldCheck({ ...base, text: 'never do that', originKind: 'plugin', isAsUser: true })).toBe(true) // Prompt Upgrade's Run it
   expect(shouldCheck({ ...base, text: 'never do that', originKind: 'plugin' })).toBe(false)
+  expect(shouldCheck({ ...base, text: 'Never edit the archive', originKind: 'plugin', isAsUser: true, pluginName: 'my-commands' })).toBe(false)
 })
 
 test('reading the model\'s verdict', () => {
@@ -199,10 +200,10 @@ test('ordinary messages cost nothing, and No thanks writes nothing', async ($, o
 
 test('/reflect: off stops the checks; options, version and the Mods menu values', async ($, on) => {
   const world = await boot($, on)
-  expect(world.published.version).toBe('0.1.0')
+  expect(world.published.version).toBe('0.1.1')
   expect(world.published.isEnabled).toBe(true)
   expect((world.published.options as Array<{ key: string }>).map(o => o.key)).toEqual(['suggest', 'skills'])
-  expect((await $.command.run({ command: 'reflect', args: 'version' })).text).toBe('Reflect version 0.1.0')
+  expect((await $.command.run({ command: 'reflect', args: 'version' })).text).toBe('Reflect version 0.1.1')
 
   expect((await $.command.run({ command: 'reflect', args: 'set suggest project' })).text).toBe('Reflect: suggest is now project.')
   expect((await $.command.run({ command: 'reflect', args: 'set colour blue' })).text).toMatch(/suggest auto\|project\|everywhere/)

@@ -1,6 +1,6 @@
 {
   "name": "reflect",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "When you correct Claude in a lasting way, offers to save it as a rule for this project, all projects, or a skill.",
   "author": { "name": "Chris Norman" },
   "license": "MIT",

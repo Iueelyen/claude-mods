@@ -9,6 +9,7 @@ How to install every mod in this repository on a Windows PC, once. After that, e
 | Usage Meter (`usage-meter`) | Shows your 5-hour and weekly usage under the prompt | `/meter` |
 | Reflect (`reflect`) | Offers to save your lasting corrections as rules | `/reflect` |
 | Team Tracker (`team-tracker`) | A Team pane: job progress, every helper, time and rough cost | `/team` |
+| My Commands (`my-commands`) | Your own commands in every chat: `/wrapup` and `/todo` | `/mycommands` |
 | Mods menu (`mod-menu`) | Control panel to switch mods and their options | `/mods` |
 
 ## Before you start
@@ -27,7 +28,7 @@ Install all my Claude Code mods from my GitHub marketplace Iueelyen/claude-mods 
 3. Run: claude plugin marketplace add Iueelyen/claude-mods --scope user
    (If it says the marketplace already exists, run: claude plugin marketplace update claude-mods)
 4. Install every mod the marketplace lists, each with: claude plugin install <mod>@claude-mods --scope user
-   Today that's clean-view, prompt-upgrade, usage-meter, reflect, team-tracker and mod-menu.
+   Today that's clean-view, prompt-upgrade, usage-meter, reflect, team-tracker, my-commands and mod-menu.
 5. Run claude plugin list and tell me whether every mod is enabled, with its version.
 If anything fails, show me the exact error and explain it in plain English.
 ```
@@ -36,7 +37,7 @@ If anything fails, show me the exact error and explain it in plain English.
 
 1. In a **Code** session, click **+** next to the prompt box, then **Plugins**.
 2. Click **Add marketplace**, type `Iueelyen/claude-mods`, then **Sync**.
-3. Add each mod: **clean-view**, **prompt-upgrade**, **usage-meter**, **reflect**, **team-tracker** and **mod-menu**.
+3. Add each mod: **clean-view**, **prompt-upgrade**, **usage-meter**, **reflect**, **team-tracker**, **my-commands** and **mod-menu**.
 
 ## Option 3: In PowerShell
 
@@ -53,7 +54,7 @@ if (-not $claude) { Write-Host "Couldn't find claude.exe. Open the Claude app's 
 
 & $claude plugin marketplace add Iueelyen/claude-mods --scope user
 & $claude plugin marketplace update claude-mods
-foreach ($mod in 'clean-view', 'prompt-upgrade', 'usage-meter', 'reflect', 'team-tracker', 'mod-menu') {
+foreach ($mod in 'clean-view', 'prompt-upgrade', 'usage-meter', 'reflect', 'team-tracker', 'my-commands', 'mod-menu') {
   & $claude plugin install "$mod@claude-mods" --scope user
 }
 & $claude plugin list

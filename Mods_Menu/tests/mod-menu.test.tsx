@@ -286,7 +286,7 @@ test('versions: each mod\'s published version shows by its name, the menu shows 
   const published = installed()
   published['clean-view']!.version = '0.1.1'
   await boot($, on, published)
-  expect((await $.command.run({ command: 'mods', args: 'version' })).text).toBe('Mods menu version 0.3.2')
+  expect((await $.command.run({ command: 'mods', args: 'version' })).text).toBe('Mods menu version 0.3.3')
   for (const surface of ['terminal', 'desktop'] as const) {
     const ui = await draw($, surface) // Clean View, the first installed mod, is selected
     expect(await allText(ui)).toMatch(/Clean View · v0\.1\.1/)
@@ -294,7 +294,7 @@ test('versions: each mod\'s published version shows by its name, the menu shows 
     await ui.press({ key: 'pick-prompt-upgrade' })
     expect(await allText(ui)).not.toMatch(/Prompt Upgrade · v/)
     await ui.press({ key: 'pick-mod-menu' })
-    expect(await allText(ui)).toMatch(/Mods menu · v0\.3\.2/)
+    expect(await allText(ui)).toMatch(/Mods menu · v0\.3\.3/)
     await ui.press({ key: 'pick-clean-view' })
     await ui.unmount()
   }
@@ -353,5 +353,27 @@ test('Team Tracker is listed with its switch, options and version', async ($, on
   await ui.press({ key: 'opt-team-tracker-cost-off' })
   await ui.press({ key: 'switch-team-tracker-off' })
   expect(runs).toEqual(['/team set cost off', '/team off'])
+  await ui.unmount()
+})
+
+test('My Commands is listed with its version and the commands it holds', async ($, on) => {
+  const published = installed()
+  published['my-commands'] = {
+    isEnabled: true,
+    version: '0.1.0',
+    options: [],
+    commands: [
+      { name: 'todo', description: 'Show what is left to do' },
+      { name: 'wrapup', description: 'End-of-session wrap-up' },
+    ],
+  }
+  const { runs } = await boot($, on, published)
+  const ui = await draw($)
+  await ui.press({ key: 'pick-my-commands' })
+  const text = await allText(ui)
+  expect(text).toMatch(/My Commands · v0\.1\.0/)
+  expect(text).toMatch(/Commands: \/mycommands, \/todo, \/wrapup/)
+  await ui.press({ key: 'switch-my-commands-off' })
+  expect(runs).toEqual(['/mycommands off'])
   await ui.unmount()
 })

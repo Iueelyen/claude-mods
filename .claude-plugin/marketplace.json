@@ -1,6 +1,6 @@
 {
   "name": "claude-mods",
-  "description": "Mods that make Claude Code calmer and friendlier: Clean View, Prompt Upgrade, Usage Meter, Reflect, Team Tracker and a Mods control panel.",
+  "description": "Mods that make Claude Code calmer and friendlier: Clean View, Prompt Upgrade, Usage Meter, Reflect, Team Tracker, My Commands and a Mods control panel.",
   "owner": { "name": "Chris Norman" },
   "plugins": [
     { "name": "clean-view", "source": "./Clean_View" },
@@ -8,6 +8,7 @@
     { "name": "usage-meter", "source": "./Usage_Meter" },
     { "name": "reflect", "source": "./Reflect" },
     { "name": "team-tracker", "source": "./Team_Tracker" },
+    { "name": "my-commands", "source": "./My_Commands" },
     { "name": "mod-menu", "source": "./Mods_Menu" }
   ]
 }
