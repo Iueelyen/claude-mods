@@ -51,6 +51,9 @@ To see which version a PC is running: open `/mods` (the version shows next to ea
 
 ## My Commands (`my-commands`)
 
+### 0.1.1 (2026-10-24)
+- `/todo` has a compact new layout: a summary line (items left by kind, estimated work), one ordered table with milestone, kind and a coloured effort bar (🟩 S, 🟨 M, 🟧 M-L, 🟥 L, ⬜ ?), then one line each for the next sprint and the sprints after it. No icons, no legend.
+
 ### 0.1.0 (2026-10-24)
 - First release: your own slash commands in every chat, one instructions file each in `library/`. `/wrapup` (CLAUDE.md rules, PROGRESS.md created or updated, README if needed, commit if there's a git repository or a plain note if not, "Safe to /clear") and a general `/todo [focus]` (colour-coded tables per milestone, next sprint; creates PROGRESS.md if missing). `/mycommands list|on|off|version`, listed in `/mods` with its version and commands.
 

@@ -71,7 +71,7 @@ test('reading a command file', () => {
 test('every .md in the library becomes a plain /command, and the Mods menu gets the list', async ($, on) => {
   const world = await boot($, on)
   expect(world.registered.sort()).toEqual(['mycommands', 'todo', 'wrapup'])
-  expect(world.published.version).toBe('0.1.0')
+  expect(world.published.version).toBe('0.1.1')
   expect(world.published.isEnabled).toBe(true)
   expect(world.published.commands).toEqual([
     { name: 'todo', description: "Show what's left to do", argumentHint: '[focus]' },
@@ -96,7 +96,7 @@ test('/mycommands: list, version, off and on', async ($, on) => {
   expect((await $.command.run({ command: 'mycommands', args: '' })).text).toBe(
     "My Commands:\n  /todo: Show what's left to do\n  /wrapup: End-of-session wrap-up",
   )
-  expect((await $.command.run({ command: 'mycommands', args: 'version' })).text).toBe('My Commands version 0.1.0')
+  expect((await $.command.run({ command: 'mycommands', args: 'version' })).text).toBe('My Commands version 0.1.1')
 
   await $.command.run({ command: 'mycommands', args: 'off' })
   expect(world.published.isEnabled).toBe(false)

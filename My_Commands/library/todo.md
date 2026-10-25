@@ -1,9 +1,9 @@
 ---
-description: Show everything left to do on this project as ordered, colour-coded tables with effort, milestones and a suggested next sprint
+description: Show everything left to do on this project - a summary, one ordered table with effort bars, and the next sprint
 argument-hint: "[focus]"
 ---
 
-Show the person everything still to do on this project, as one ordered, colour-coded list.
+Show the person everything still to do on this project, as one compact, ordered list.
 Read-only: do not edit, create or commit any file, except the one case in step 1 below.
 Optional focus from the person (blank = everything): $ARGUMENTS
 
@@ -27,7 +27,7 @@ Optional focus from the person (blank = everything): $ARGUMENTS
 ## In progress / unfinished
 ## Known bugs
 ## Next steps
-(in order; each item: short name, kind = fix / feature / polish / security / needs a decision, effort = S / M / M-L / L / ?)
+(in order; each item: short name, kind = fix / feature / polish / platform / decision, effort = S / M / M-L / L / ?)
 ## Decisions
 ```
 
@@ -36,33 +36,42 @@ Skip anything struck through (`~~...~~`) or marked done. Merge duplicates (the s
 ## 2. Order it, using your own judgment
 Start from the order the project's own files give, then apply what makes sense: dependencies first, bugs that break daily use before polish, items that share a test next to each other. Keep the person's standing decisions (PROGRESS.md "Decisions", CLAUDE.md) unless you flag them. Wherever your order differs from theirs, say so in the "Why here" column ("moved up: ...").
 
-## 3. The tables
-Legend first, exactly this:
+## 3. The output, exactly in this shape (no emoji other than the effort bar squares, no legend)
 
-**Effort:** 🟢 S (1-2 h) · 🟡 M (one session) · 🟠 M-L (1-2 sessions) · 🔴 L (several sessions) · ⚪ ? (discuss first)
-**Kind:** 🐞 fix · ✨ feature · 🔧 polish · 🔒 security / platform · 💬 needs a decision from the person
+**Line 1, the heading:** `**<Project name> · v<version>**` (leave out the version if the project has none).
 
-Then ONE markdown table PER MILESTONE (markdown cannot merge cells, so never put divider rows inside a table). Use the project's own milestones or versions if it has them; otherwise use **Now**, **Next** and **Later / someday**. Each table gets its own heading line above it, for example:
-`### ━━ Now (on <version>) ━━`
-`### ━━ Next ━━`
-`### ━━ Later / someday (not scheduled) ━━`
+**Then the summary table**, one row:
 
-Same columns in every table: `# | Item | Kind | Effort | What it is (one line) | Why here`
-- The # keeps counting across the tables (one overall order).
-- Effort cell = the colour dot + the letter + a rough time, e.g. `🟡 M ~3-4 h`.
-- Item cell = the item's id if it has one + a short name; the planned version if known.
-- Later / someday: keep it short (one row per group of small ideas).
+| Left | Fixes | Features | Polish | Platform | Decisions | Est. work |
+|---|---|---|---|---|---|---|
+| **<total>** | n | n | n | n | n | ≈ <total effort, e.g. 6 sessions> |
 
-## 4. Suggested next sprint
-A short boxed section (blockquote) under the tables:
-- **Next sprint:** about 3-4 items, each its own release (version bump, changelog, the person's test, deploy). The person's testing time is the limit; prefer items tested on the same screen or area.
-- One line per item: the version it would get (if the project uses versions), its effort, why it belongs in this sprint.
-- The total effort for the sprint, and anything that needs a decision from the person BEFORE it starts.
+Leave out a kind column whose count is 0.
 
-Then **Sprints after that:** a small table `Sprint | Items | Theme` grouping the rest the same way.
+**Then ONE table** with every item in the overall order:
 
-## 5. Close
-- One line: what you changed compared to the project's own order (or "same order as the project's list").
-- End with: "Tell me any changes to the order or grouping, and I'll update the list after you OK it." (Only after the person answers and says yes: edit the backlog or PROGRESS.md, show the diff, and follow CLAUDE.md's rules.)
+| # | Milestone | Item | Kind | Effort | Why here |
+|---|---|---|---|---|---|
 
-Keep it brief: no filler, no paragraphs outside the sections above.
+- **#**: one overall order, 1, 2, 3...
+- **Milestone**: the project's own milestone or version line (e.g. `2.x`, `3.0`), or `Now`, `Next`, `Later` if it has none. Small "someday" ideas go last as `Later`, grouped into one row per idea group.
+- **Item**: the item's id if it has one, then a short name; no icons.
+- **Kind**: one word: `Fix`, `Feature`, `Polish`, `Platform` (security / infrastructure), or `Decision` (needs the person's input first).
+- **Effort**: a four-square bar, then the size and a rough time:
+  - S: `🟩⬜⬜⬜ S · 1-2 h`
+  - M: `🟨🟨⬜⬜ M · 3-4 h` (one session)
+  - M-L: `🟧🟧🟧⬜ M-L · 1-2 sessions`
+  - L: `🟥🟥🟥🟥 L · <n> sessions`
+  - not sized yet: `⬜⬜⬜⬜ ? · discuss`
+- **Why here**: a few words, only where it helps: "moved up: ...", "needs #4", "same screen as #3", "starts 3.0". Leave it blank otherwise.
+
+## 4. The next sprints, two compact lines under the table
+- `**Next sprint** · <version> <item> · <version> <item> · ... · *≈ <effort>* · *decide first:* <anything needing a decision, or leave this part out>`
+  About 3-4 items, each its own release (version bump, changelog, the person's test, deploy). The person's testing time is the limit; prefer items tested on the same screen or area. Leave out version numbers if the project doesn't use them.
+- `**Sprints after that** · 2: <theme or items> · 3: <theme or items> · ...`
+
+## 5. Close, in one or two short lines
+- `*Changed from the project's order:* <what moved>` (or `*Same order as the project's list.*`)
+- Then: "Tell me any changes to the order or grouping, and I'll update the list after you OK it." (Only after the person answers and says yes: edit the backlog or PROGRESS.md, show the diff, and follow CLAUDE.md's rules.)
+
+Keep it compact: no paragraphs, no filler, nothing outside the shape above. With a focus, show only the matching items (and say "focus: <topic>" after the heading).

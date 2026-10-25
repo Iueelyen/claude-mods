@@ -7,7 +7,7 @@ import type { CommandFile } from './library'
 
 type Dollar = EngineInterface
 
-const VERSION = '0.1.0' // keep in step with .claude-plugin/plugin.json
+const VERSION = '0.1.1' // keep in step with .claude-plugin/plugin.json
 const CONTROL = 'mycommands'
 const STORE_ENABLED = 'isEnabled'
 
