@@ -1,0 +1,8 @@
+{
+  "name": "team-tracker",
+  "version": "0.1.0",
+  "description": "A Team pane: how far the job is, every helper Claude sends off, how long each has run and roughly what it would cost at API prices.",
+  "author": { "name": "Chris Norman" },
+  "license": "MIT",
+  "types": "./types/index.d.ts"
+}

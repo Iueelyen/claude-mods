@@ -4,7 +4,7 @@ import type { EngineInterface, On } from 'claude-code'
 type Dollar = EngineInterface
 
 const PANE = 'mod-menu'
-const VERSION = '0.3.1' // keep in step with .claude-plugin/plugin.json
+const VERSION = '0.3.2' // keep in step with .claude-plugin/plugin.json
 
 const COLOR = {
   gold: '#F2C46D',
@@ -116,6 +116,18 @@ async function readMods($: Dollar): Promise<ModRow[]> {
       isOn: asSwitch(await $.state.get({ plugin: 'reflect', key: 'isEnabled' })),
       version: asVersion(await $.state.get({ plugin: 'reflect', key: 'version' })),
       options: asOptions(await $.state.get({ plugin: 'reflect', key: 'options' })),
+    },
+    {
+      id: 'team-tracker',
+      title: 'Team Tracker',
+      summary: 'A Team pane: how far the job is, every helper Claude sends off, how long each has run and roughly what it would cost.',
+      commands: ['/team', '/team set'],
+      command: 'team',
+      onArgs: 'on',
+      offArgs: 'off',
+      isOn: asSwitch(await $.state.get({ plugin: 'team-tracker', key: 'isEnabled' })),
+      version: asVersion(await $.state.get({ plugin: 'team-tracker', key: 'version' })),
+      options: asOptions(await $.state.get({ plugin: 'team-tracker', key: 'options' })),
     },
     {
       id: 'mod-menu',
