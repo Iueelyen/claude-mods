@@ -1,10 +1,23 @@
 import { atom, read, update } from 'claude-code'
 import type { EngineInterface, On } from 'claude-code'
 
+import {
+  MARKETPLACE_URL,
+  READY_TOAST,
+  fallbackPrompt,
+  isUpToDate,
+  parseMarketplace,
+  parseVersion,
+  planUpdate,
+  pluginJsonUrl,
+  updatePrompt,
+} from './update'
+import type { RepoMod } from './update'
+
 type Dollar = EngineInterface
 
 const PANE = 'mod-menu'
-const VERSION = '0.3.4' // keep in step with .claude-plugin/plugin.json
+const VERSION = '0.4.0' // keep in step with .claude-plugin/plugin.json
 
 const COLOR = {
   gold: '#F2C46D',
@@ -16,6 +29,7 @@ const COLOR = {
 } as const
 
 const selectedAtom = atom({ plugin: 'mod-menu', key: 'selected' } as const, null)
+const noteAtom = atom({ plugin: 'mod-menu', key: 'note' } as const, null)
 
 const GROUPS = ['General', 'Behavior', 'Data'] as const
 /** Below this the panel stacks into one column. */
@@ -190,7 +204,64 @@ async function select($: Dollar, id: string): Promise<void> {
   await update($, selectedAtom, () => id)
 }
 
+// ---------------------------------------------------------------------------
+// The Update button: compare GitHub with what this chat has loaded, then put the
+// prompt that closes the gap in the prompt box, unsent.
+
+async function setNote($: Dollar, note: string | null): Promise<void> {
+  await update($, noteAtom, () => note)
+}
+
+/** What the repository offers, or null when GitHub can't be read from here. */
+async function readRepo($: Dollar): Promise<RepoMod[] | null> {
+  try {
+    const list = await $.http.fetch(MARKETPLACE_URL)
+    if (!list.ok) return null
+    const mods = parseMarketplace(list.text)
+    if (mods.length === 0) return null
+    return await Promise.all(
+      mods.map(async m => {
+        const manifest = await $.http.fetch(pluginJsonUrl(m.folder)).catch(() => undefined)
+        return { name: m.name, version: manifest?.ok ? parseVersion(manifest.text) : undefined }
+      }),
+    )
+  } catch {
+    return null
+  }
+}
+
+async function fillAndClose($: Dollar, text: string): Promise<void> {
+  const filled = await $.prompt.fill({ text })
+  if (!filled.isFilled) {
+    await setNote($, "Couldn't put the update prompt in your prompt box. Close any open dialog and try again.")
+    return
+  }
+  await setNote($, null)
+  $.ui.toast(READY_TOAST)
+  await $.ui.close({ id: PANE })
+}
+
+async function checkForUpdates($: Dollar): Promise<void> {
+  await setNote($, 'Checking GitHub for updates…')
+  const repo = await readRepo($)
+  if (repo === null) {
+    await setNote($, "Couldn't reach GitHub, so the prompt asks Claude to check everything itself.")
+    await fillAndClose($, fallbackPrompt())
+    return
+  }
+  // The versions loaded in this chat; a mod the menu knows that isn't loaded counts as missing.
+  const local = new Map<string, string | undefined>()
+  for (const mod of await readMods($)) local.set(mod.id, mod.isOn === undefined ? undefined : mod.version)
+  const plan = planUpdate(repo, local)
+  if (isUpToDate(plan)) {
+    await setNote($, 'Everything is up to date (as loaded in this chat).')
+    return
+  }
+  await fillAndClose($, updatePrompt(plan, repo))
+}
+
 async function openMenu($: Dollar): Promise<void> {
+  await setNote($, null)
   const opened = await $.ui.open({ id: PANE, title: 'Mods', focus: true, closeOnEscape: true, rows: 24, columns: 100 })
   if (!opened.isPlaced) $.ui.toast('The window is too narrow for the Mods menu. Widen it and type /mods again.')
 }
@@ -285,18 +356,26 @@ export function registerModMenu(on: On): void {
     const installed = mods.filter(m => m.isOn !== undefined).length
     const switchedOn = mods.filter(m => m.isOn === true).length
     const summary = `${installed} installed · ${switchedOn} on`
+    const note = await read($, noteAtom)
+    const updateWidth = 10 // the terminal draws "[ Update ]"
     const top = [
       <Box flexDirection="row" width={cols} justifyContent="space-between">
         <Text bold color={COLOR.text}>
           MODS
         </Text>
-        <Text color={COLOR.muted}>{summary.length + 5 <= cols ? summary : ''}</Text>
+        <Box flexDirection="row" columnGap={1}>
+          <Text color={COLOR.muted}>{summary.length + updateWidth + 7 <= cols ? summary : ''}</Text>
+          <Button key="update" variant="secondary" label="Update" onPress={() => void checkForUpdates($)} />
+        </Box>
       </Box>,
       <Text wrap="truncate-end">
         <Text color={COLOR.gold}>━━━━</Text>
         <Text color={COLOR.hair}>{'─'.repeat(Math.max(0, cols - 4))}</Text>
       </Text>,
     ]
+    if (note !== null) {
+      for (const line of wrapLines(note, cols)) top.push(<Text color={COLOR.gold}>{line}</Text>)
+    }
 
     // -- Left column: the list ---------------------------------------------------
 

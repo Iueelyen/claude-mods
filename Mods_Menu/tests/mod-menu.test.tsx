@@ -1,6 +1,8 @@
 import { expect, mock, test } from 'claude-code/testing'
 import type { On } from 'claude-code'
 
+import { compareVersions, parseMarketplace, planUpdate, updatePrompt } from '../hooks/update'
+
 type Engine = Parameters<Parameters<typeof test>[1]>[0]
 
 const PANE = {
@@ -67,9 +69,12 @@ function installed(): Published {
 }
 
 // Nothing sits beneath the plugin: these hooks stand for the engine and the other mods.
-function engine(on: On, published: Published) {
+function engine(on: On, published: Published, github: Record<string, string> | null = {}) {
   const runs: string[] = []
   const opened: string[] = []
+  const filled: string[] = []
+  const toasts: string[] = []
+  const closed: string[] = []
   const clock = mock.clock(on)
   on('session.start', (_, e) => ({ cwd: e.cwd }))
   on('command.register', (_, e) => ({ value: { command: e.name } }))
@@ -77,7 +82,24 @@ function engine(on: On, published: Published) {
     opened.push(e.id)
     return { value: { isPlaced: true } }
   })
-  on('ui.toast', () => ({ value: undefined }))
+  on('ui.close', (_, e) => {
+    closed.push(e.id)
+    return { value: undefined }
+  })
+  on('ui.toast', (_, e) => {
+    toasts.push(e.text)
+    return { value: undefined }
+  })
+  on('prompt.fill', (_, e) => {
+    filled.push(e.text)
+    return { isFilled: true, box: { text: e.text, cursor: e.text.length } }
+  })
+  // GitHub's raw files, by the end of their address; null stands for no network.
+  on('http.fetch', (_, e) => {
+    if (github === null) throw new Error('offline')
+    const hit = Object.entries(github).find(([end]) => e.url.endsWith(end))
+    return { value: hit ? { status: 200, ok: true, headers: {}, text: hit[1] } : { status: 404, ok: false, headers: {}, text: '' } }
+  })
   // The other mods' own commands: record the run and change what they publish.
   on('command.run', (_, e) => {
     runs.push(`/${e.command} ${e.args}`)
@@ -99,11 +121,11 @@ function engine(on: On, published: Published) {
     if (owner === undefined || !(e.key in owner)) return { value: { value: undefined, version: 0 } }
     return { value: { value: owner[e.key], version: 1 } }
   })
-  return { clock, runs, opened }
+  return { clock, runs, opened, filled, toasts, closed }
 }
 
-async function boot($: Engine, on: On, published: Published) {
-  const world = engine(on, published)
+async function boot($: Engine, on: On, published: Published, github?: Record<string, string> | null) {
+  const world = engine(on, published, github)
   await $.session.start({ cwd: '/', surface: 'terminal', isInteractive: true })
   return world
 }
@@ -286,7 +308,7 @@ test('versions: each mod\'s published version shows by its name, the menu shows 
   const published = installed()
   published['clean-view']!.version = '0.1.1'
   await boot($, on, published)
-  expect((await $.command.run({ command: 'mods', args: 'version' })).text).toBe('Mods menu version 0.3.4')
+  expect((await $.command.run({ command: 'mods', args: 'version' })).text).toBe('Mods menu version 0.4.0')
   for (const surface of ['terminal', 'desktop'] as const) {
     const ui = await draw($, surface) // Clean View, the first installed mod, is selected
     expect(await allText(ui)).toMatch(/Clean View · v0\.1\.1/)
@@ -294,7 +316,7 @@ test('versions: each mod\'s published version shows by its name, the menu shows 
     await ui.press({ key: 'pick-prompt-upgrade' })
     expect(await allText(ui)).not.toMatch(/Prompt Upgrade · v/)
     await ui.press({ key: 'pick-mod-menu' })
-    expect(await allText(ui)).toMatch(/Mods menu · v0\.3\.4/)
+    expect(await allText(ui)).toMatch(/Mods menu · v0\.4\.0/)
     await ui.press({ key: 'pick-clean-view' })
     await ui.unmount()
   }
@@ -404,4 +426,110 @@ test('a long command description wraps under itself and every row fits', async (
     await ui.press({ key: 'pick-clean-view' })
     await ui.unmount()
   }
+})
+
+// ---------------------------------------------------------------------------
+// The Update button.
+
+const MARKET = JSON.stringify({
+  name: 'claude-mods',
+  plugins: [
+    { name: 'clean-view', source: './Clean_View' },
+    { name: 'prompt-upgrade', source: './Prompt_Upgrade' },
+    { name: 'brand-new', source: './Brand_New' },
+    { name: 'mod-menu', source: './Mods_Menu' },
+  ],
+})
+const GITHUB = {
+  '/.claude-plugin/marketplace.json': MARKET,
+  '/Clean_View/.claude-plugin/plugin.json': '{"name":"clean-view","version":"0.1.3"}',
+  '/Prompt_Upgrade/.claude-plugin/plugin.json': '{"name":"prompt-upgrade","version":"0.1.1"}',
+  '/Brand_New/.claude-plugin/plugin.json': '{"name":"brand-new","version":"0.1.0"}',
+  '/Mods_Menu/.claude-plugin/plugin.json': '{"name":"mod-menu","version":"0.4.0"}',
+}
+
+test('update: reading the repository and deciding what to do', () => {
+  expect(parseMarketplace(MARKET).map(m => m.folder)).toEqual(['Clean_View', 'Prompt_Upgrade', 'Brand_New', 'Mods_Menu'])
+  expect(parseMarketplace('not json')).toEqual([])
+  expect(compareVersions('0.3.9', '0.3.10')).toBe(-1)
+  expect(compareVersions('0.4.0', '0.4.0')).toBe(0)
+  expect(compareVersions('1.0', '0.9.9')).toBe(1)
+
+  const repo = [
+    { name: 'clean-view', version: '0.1.3' },
+    { name: 'prompt-upgrade', version: '0.1.1' },
+    { name: 'reflect', version: '0.1.1' },
+    { name: 'brand-new', version: '0.1.0' },
+  ]
+  const local = new Map<string, string | undefined>([
+    ['clean-view', '0.1.2'],
+    ['prompt-upgrade', '0.1.1'],
+    ['reflect', undefined],
+  ])
+  const plan = planUpdate(repo, local)
+  expect(plan.outdated).toEqual([{ name: 'clean-view', from: '0.1.2', to: '0.1.3' }])
+  expect(plan.missing.map(m => m.name)).toEqual(['reflect'])
+  expect(plan.unknown.map(m => m.name)).toEqual(['brand-new'])
+  expect(plan.current.map(m => m.name)).toEqual(['prompt-upgrade'])
+
+  const text = updatePrompt(plan, repo)
+  expect(text).toMatch(/wait for my yes/)
+  expect(text).toMatch(/Install these mods[^\n]*\n {3}reflect 0\.1\.1/)
+  expect(text).toMatch(/Update these mods[^\n]*\n {3}clean-view 0\.1\.2 -> 0\.1\.3/)
+  expect(text).toMatch(/install each one if it isn't installed[\s\S]*brand-new 0\.1\.0/)
+  expect(text).toMatch(/They should be: clean-view 0\.1\.3, prompt-upgrade 0\.1\.1, reflect 0\.1\.1, brand-new 0\.1\.0, all enabled\./)
+  expect(text).toMatch(/Open a new chat to see the changes/)
+})
+
+test('update: the button puts the prompt in the box, unsent, says to open a new chat, and closes the menu', async ($, on) => {
+  const published = installed()
+  published['clean-view']!.version = '0.1.2'
+  published['prompt-upgrade']!.version = '0.1.1'
+  const world = await boot($, on, published, GITHUB)
+  for (const surface of ['terminal', 'desktop'] as const) {
+    world.filled.length = 0
+    world.toasts.length = 0
+    const ui = await draw($, surface)
+    await ui.press({ key: 'update' })
+    await ui.unmount()
+    expect(world.filled).toHaveLength(1)
+    expect(world.filled[0]).toMatch(/clean-view 0\.1\.2 -> 0\.1\.3/)
+    expect(world.filled[0]).toMatch(/brand-new 0\.1\.0/)
+    expect(world.filled[0]).not.toMatch(/prompt-upgrade 0\.1\.1 ->/) // already current
+    expect(world.toasts).toEqual(['Update ready in your prompt box. Press Send, then open a new chat to see the changes.'])
+    expect(world.closed.at(-1)).toBe('mod-menu')
+  }
+})
+
+test('update: everything current says so and leaves the prompt box alone', async ($, on) => {
+  const published = installed()
+  published['clean-view']!.version = '0.1.3'
+  published['prompt-upgrade']!.version = '0.1.1'
+  const world = await boot($, on, published, {
+    '/.claude-plugin/marketplace.json': JSON.stringify({
+      plugins: [
+        { name: 'clean-view', source: './Clean_View' },
+        { name: 'prompt-upgrade', source: './Prompt_Upgrade' },
+        { name: 'mod-menu', source: './Mods_Menu' },
+      ],
+    }),
+    '/Clean_View/.claude-plugin/plugin.json': '{"version":"0.1.3"}',
+    '/Prompt_Upgrade/.claude-plugin/plugin.json': '{"version":"0.1.1"}',
+    '/Mods_Menu/.claude-plugin/plugin.json': '{"version":"0.4.0"}',
+  })
+  const ui = await draw($)
+  await ui.press({ key: 'update' })
+  expect(await allText(ui)).toMatch(/Everything is up to date/)
+  await ui.unmount()
+  expect(world.filled).toEqual([])
+})
+
+test('update: no network falls back to a prompt that checks everything', async ($, on) => {
+  const world = await boot($, on, installed(), null)
+  const ui = await draw($)
+  await ui.press({ key: 'update' })
+  await ui.unmount()
+  expect(world.filled).toHaveLength(1)
+  expect(world.filled[0]).toMatch(/For every mod the claude-mods marketplace lists/)
+  expect(world.filled[0]).toMatch(/Open a new chat to see the changes/)
 })

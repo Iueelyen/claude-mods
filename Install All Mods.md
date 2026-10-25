@@ -78,7 +78,9 @@ If the first line after the search says the marketplace already exists, that's f
 
 ## Getting updates later
 
-When a mod changes in this repository, run:
+The easy way: type `/mods` and click **Update** (Mods menu 0.4.0 or later). It compares this PC with this repository and puts a ready-made prompt in your prompt box: what's missing, what's out of date, and the versions to expect. Read it, press Send, say yes when Claude shows what it will run, then **open a new chat** to see the changes.
+
+By hand, when a mod changes in this repository, run:
 
 ```
 claude plugin marketplace update claude-mods

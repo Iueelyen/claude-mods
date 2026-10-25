@@ -4,7 +4,7 @@ A control panel for your Claude Code mods. Type `/mods` to open it.
 
 - **Left:** every mod, with ● on, ○ off or · not installed. Click one to select it (gold).
 - **Right:** the selected mod's name and OFF/ON switch, what it does, and its settings grouped under General, Behavior and Data. Each setting is a row of choices with the current one in gold, or a button for an action such as Clear history. Its commands are listed at the bottom.
-- **Top:** how many mods are installed and on.
+- **Top:** how many mods are installed and on, and an **Update** button. It reads this repository's mod list on GitHub (public files only; nothing is sent), compares it with the versions loaded in this chat, and puts a prompt in your prompt box to install what's missing and update what's out of date. It doesn't send it: you read it and press Send, then open a new chat to see the changes. If everything is current it says so; if GitHub can't be reached, the prompt asks Claude to check everything itself.
 - **Versions:** each mod's version shows next to its name (`/mods version` shows the menu's own).
 
 Under about 70 columns the panel stacks into one column. Esc closes it.

@@ -59,6 +59,9 @@ To see which version a PC is running: open `/mods` (the version shows next to ea
 
 ## Mods menu (`mod-menu`)
 
+### 0.4.0 (2026-10-24)
+- An **Update** button: compares GitHub with the versions loaded in this chat and puts an update prompt (what to install, what to update, the versions to expect) in the prompt box, unsent. A notice and the prompt's last line both say to open a new chat to see the changes. Says so when everything is current; falls back to a check-everything prompt when GitHub can't be reached.
+
 ### 0.3.4 (2026-10-24)
 - My Commands' settings now list each command with what it does (a COMMANDS section, long descriptions wrapped).
 
