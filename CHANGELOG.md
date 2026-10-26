@@ -6,6 +6,9 @@ To see which version a PC is running: open `/mods` (the version shows next to ea
 
 ## Clean View (`clean-view`)
 
+### 0.1.3 (2026-10-26)
+- Fix: the progress checklist stopped showing while Claude worked (since 0.1.2). The band put Claude Code's own placeholder inside its fixed-width box, which Claude Code refuses, so nothing drew. What's beneath now goes after the checklist, outside that box.
+
 ### 0.1.2 (2026-10-24)
 - Other mods' bands above the prompt (such as Reflect's offer) now show under the checklist instead of being hidden.
 
@@ -35,6 +38,9 @@ To see which version a PC is running: open `/mods` (the version shows next to ea
 - Options (in `/mods` or `/meter set`): warning colours, pop-up near the limit.
 
 ## Reflect (`reflect`)
+
+### 0.1.2 (2026-10-26)
+- Fix: the "Save as a rule?" bar had the same fixed-width-box problem as Clean View 0.1.2 and could fail to show. What's beneath now goes after the bar.
 
 ### 0.1.1 (2026-10-24)
 - Ignores the instructions My Commands sends (they're full of "never" and "do not" but are never a correction), so no Haiku check is spent on them.

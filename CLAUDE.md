@@ -33,7 +33,7 @@ This repository is the `claude-mods` marketplace: Claude Code mods (function-hoo
 - Functions that take `$` must be top-level functions in the file.
 - `$.state` references need literal `plugin` and `key`.
 - The desktop app draws Buttons natively and drops any colour inside them: show a selected state as a coloured Box/Text, not a Button; keep coloured dots outside Buttons.
-- A mod drawing above the prompt (`AbovePrompt`) must call `next(e)` and include what's beneath, so other mods' bands still show.
+- A mod drawing above the prompt (`AbovePrompt`) must call `next(e)` and include what's beneath, so other mods' bands still show, but never inside a Box that has a `width`: Claude Code refuses its own placeholder (`{ type: 'engine' }`, what `next(e)` answers when nothing is beneath) there and drops the whole band. Put it after the fixed-width box, in an outer Box with no width. Band tests must include a hook beneath answering `{ type: 'engine', ref: 0 }`.
 - A plugin's `commands/` folder loads as extra prefixed commands; My Commands keeps its files in `library/` instead.
 - In tests, `$.fs` paths arrive in Windows form (`C:\...`): normalise before comparing. A test hook answering `state.get` must pass the mod's own keys to `next(e)`.
 - Use the Edit tool (not shell `sed` or `node -e`) for lines containing non-ASCII characters such as `·`; the shell mangles them.

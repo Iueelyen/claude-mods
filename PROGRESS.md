@@ -9,16 +9,17 @@ The `claude-mods` marketplace on GitHub (`Iueelyen/claude-mods`, public), kept i
 
 | Mod | Version | What it does |
 |---|---|---|
-| Clean View | 0.1.2 | Plain checklist above the prompt, hides technical rows |
+| Clean View | 0.1.3 | Plain checklist above the prompt, hides technical rows |
 | Prompt Upgrade | 0.1.1 | `/better`: questions, rewrite, side-by-side review |
 | Usage Meter | 0.1.1 | 5-hour and weekly usage bars |
-| Reflect | 0.1.1 | Offers to save lasting corrections as rules |
+| Reflect | 0.1.2 | Offers to save lasting corrections as rules |
 | Team Tracker | 0.1.0 | `/team` pane: steps, helpers, time, rough cost |
 | My Commands | 0.1.1 | `/wrapup`, `/todo`, `/mycommands` |
 | Dragon Panel | 0.2.1 | `/dragon`: Azure Dragon control panel (only on PCs with that repo) |
 | Mods menu | 0.4.1 | `/mods`: two-column control panel with switches, options and an Update button |
 
 ## Completed
+- 2026-10-26: Fixed the Clean View progress checklist not showing while Claude worked (0.1.3) and the same problem in Reflect's Save bar (0.1.2); tests now include Claude Code's band placeholder.
 - 2026-10-25: Dragon Panel moved in from the Azure Dragon project with an anonymous test, then given a version, an on/off switch and a `/mods` row (0.2.1); Mods menu 0.4.1.
 - 2026-10-25: Mods menu Update button (0.4.0): compares GitHub with this chat and fills in an update prompt, unsent.
 - 2026-10-24: My Commands (`/wrapup`, general `/todo` with a compact layout); Team Tracker; Reflect; versions shown in `/mods`; CHANGELOG; install guide; Usage Meter added.

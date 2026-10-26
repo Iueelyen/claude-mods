@@ -211,8 +211,8 @@ test('version: published for the Mods menu, and /simple version says it', async 
     return next(e)
   })
   await startJob($, on)
-  expect(published.version).toBe('0.1.2')
-  expect((await $.command.run({ command: 'simple', args: 'version' })).text).toBe('Clean View version 0.1.2')
+  expect(published.version).toBe('0.1.3')
+  expect((await $.command.run({ command: 'simple', args: 'version' })).text).toBe('Clean View version 0.1.3')
 })
 
 test('another mod\'s band (Reflect\'s offer, say) shows under the checklist', async ($, on) => {
@@ -226,5 +226,18 @@ test('another mod\'s band (Reflect\'s offer, say) shows under the checklist', as
   for (const surface of ['terminal', 'desktop'] as const) {
     const all = (await texts($, surface)).join('\n')
     expect(all).toMatch(/Build the page[\s\S]*Save as a rule\?/)
+  }
+})
+
+test('with Claude Code\'s own band placeholder beneath, the checklist still draws (the 0.1.2 bug)', async ($, on) => {
+  // In a real session next(e) answers the engine's own drawing, which Claude Code refuses
+  // inside a Box that has a width.
+  on('ui.render', () => ({ type: 'engine', ref: 0 }) as never)
+  await startJob($, on)
+  await $.tool.call({ tool: PLAN, steps: ['Build the page', 'Check the page'] })
+  for (const surface of ['terminal', 'desktop'] as const) {
+    const all = (await texts($, surface)).join('\n')
+    expect(all).toMatch(/▶ Build the page/)
+    expect(all).toMatch(/○ Check the page/)
   }
 })

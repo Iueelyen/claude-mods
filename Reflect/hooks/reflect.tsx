@@ -21,7 +21,7 @@ import type { Where } from './logic'
 
 type Dollar = EngineInterface
 
-const VERSION = '0.1.1' // keep in step with .claude-plugin/plugin.json
+const VERSION = '0.1.2' // keep in step with .claude-plugin/plugin.json
 const STALE_MS = 30 * 60 * 1000
 const STORE_ENABLED = 'isEnabled'
 const STORE_SETTINGS = 'settings'
@@ -215,7 +215,7 @@ export function registerReflect(on: On): void {
     const width = Math.max(20, e.props.bodyColumns)
     const quoted = `“${offer.rule}”`
 
-    return (
+    const bar = (
       <Box flexDirection="column" width={width}>
         <Text wrap="wrap">
           <Text color={COLOR.gold} bold>
@@ -234,6 +234,14 @@ export function registerReflect(on: On): void {
           ))}
           <Button key="reflect-no" label="No thanks" dimColor onPress={() => void update($, offerAtom, () => null)} />
         </Box>
+      </Box>
+    )
+    // What's beneath goes after the bar, outside its fixed-width box: Claude Code refuses
+    // its own band placeholder (next(e) with nothing beneath) inside a Box with a width.
+    if (below === undefined) return bar
+    return (
+      <Box flexDirection="column">
+        {bar}
         {below}
       </Box>
     )

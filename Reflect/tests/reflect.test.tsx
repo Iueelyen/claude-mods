@@ -200,10 +200,10 @@ test('ordinary messages cost nothing, and No thanks writes nothing', async ($, o
 
 test('/reflect: off stops the checks; options, version and the Mods menu values', async ($, on) => {
   const world = await boot($, on)
-  expect(world.published.version).toBe('0.1.1')
+  expect(world.published.version).toBe('0.1.2')
   expect(world.published.isEnabled).toBe(true)
   expect((world.published.options as Array<{ key: string }>).map(o => o.key)).toEqual(['suggest', 'skills'])
-  expect((await $.command.run({ command: 'reflect', args: 'version' })).text).toBe('Reflect version 0.1.1')
+  expect((await $.command.run({ command: 'reflect', args: 'version' })).text).toBe('Reflect version 0.1.2')
 
   expect((await $.command.run({ command: 'reflect', args: 'set suggest project' })).text).toBe('Reflect: suggest is now project.')
   expect((await $.command.run({ command: 'reflect', args: 'set colour blue' })).text).toMatch(/suggest auto\|project\|everywhere/)
@@ -213,4 +213,17 @@ test('/reflect: off stops the checks; options, version and the Mods menu values'
   await $.prompt.submit(typed('Never use em dashes'))
   await world.clock.settle()
   expect(world.models).toEqual([])
+})
+
+test('with Claude Code\'s own band placeholder beneath, the Save bar still draws', async ($, on) => {
+  on('ui.render', () => ({ type: 'engine', ref: 0 }) as never)
+  const world = await boot($, on)
+  await $.prompt.submit(typed('Never use em dashes in anything you write for me'))
+  await world.clock.settle()
+  for (const surface of ['terminal', 'desktop'] as const) {
+    const ui = await $.ui.mount({ ...BAND, surface })
+    expect(await ui.find({ type: 'Text', text: /Save as a rule\?/ })).toBeDefined()
+    expect(await ui.find({ key: 'reflect-everywhere' })).toBeDefined()
+    await ui.unmount()
+  }
 })

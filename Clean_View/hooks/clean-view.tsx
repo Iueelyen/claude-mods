@@ -6,7 +6,7 @@ import type { CleanViewChecklist, CleanViewOption, CleanViewSettings, CleanViewT
 // ---------------------------------------------------------------------------
 // Shared state (see types/index.d.ts): other mods may read these.
 
-const VERSION = '0.1.2' // keep in step with .claude-plugin/plugin.json
+const VERSION = '0.1.3' // keep in step with .claude-plugin/plugin.json
 const versionAtom = atom({ plugin: 'clean-view', key: 'version' } as const, VERSION)
 const enabledAtom = atom({ plugin: 'clean-view', key: 'cleanViewEnabled' } as const, true)
 const tickAtom = atom({ plugin: 'clean-view', key: 'tick' } as const, 0)
@@ -711,10 +711,18 @@ export function registerCleanView(on: On): void {
       )
     })
 
-    return (
+    const checklist = (
       <Box flexDirection="column" width={columns}>
         {headerRow}
         {rows}
+      </Box>
+    )
+    // Other mods' bands go after the checklist, outside its fixed-width box: Claude Code
+    // refuses its own band placeholder (next(e) with nothing beneath) inside a Box with a width.
+    if (below === undefined) return checklist
+    return (
+      <Box flexDirection="column">
+        {checklist}
         {below}
       </Box>
     )
