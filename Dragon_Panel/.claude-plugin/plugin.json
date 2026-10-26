@@ -1,0 +1,6 @@
+{
+  "name": "dragon-panel",
+  "version": "0.2.0",
+  "description": "Azure Dragon control panel: tenant lights, servers with Connect, drift counts, last backup (read and launch only)",
+  "types": "./types/index.d.ts"
+}

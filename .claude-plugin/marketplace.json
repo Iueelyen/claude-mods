@@ -9,6 +9,7 @@
     { "name": "reflect", "source": "./Reflect" },
     { "name": "team-tracker", "source": "./Team_Tracker" },
     { "name": "my-commands", "source": "./My_Commands" },
+    { "name": "dragon-panel", "source": "./Dragon_Panel" },
     { "name": "mod-menu", "source": "./Mods_Menu" }
   ]
 }
