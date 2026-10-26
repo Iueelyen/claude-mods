@@ -308,7 +308,7 @@ test('versions: each mod\'s published version shows by its name, the menu shows 
   const published = installed()
   published['clean-view']!.version = '0.1.1'
   await boot($, on, published)
-  expect((await $.command.run({ command: 'mods', args: 'version' })).text).toBe('Mods menu version 0.4.0')
+  expect((await $.command.run({ command: 'mods', args: 'version' })).text).toBe('Mods menu version 0.4.1')
   for (const surface of ['terminal', 'desktop'] as const) {
     const ui = await draw($, surface) // Clean View, the first installed mod, is selected
     expect(await allText(ui)).toMatch(/Clean View · v0\.1\.1/)
@@ -316,7 +316,7 @@ test('versions: each mod\'s published version shows by its name, the menu shows 
     await ui.press({ key: 'pick-prompt-upgrade' })
     expect(await allText(ui)).not.toMatch(/Prompt Upgrade · v/)
     await ui.press({ key: 'pick-mod-menu' })
-    expect(await allText(ui)).toMatch(/Mods menu · v0\.4\.0/)
+    expect(await allText(ui)).toMatch(/Mods menu · v0\.4\.1/)
     await ui.press({ key: 'pick-clean-view' })
     await ui.unmount()
   }
@@ -532,4 +532,36 @@ test('update: no network falls back to a prompt that checks everything', async (
   expect(world.filled).toHaveLength(1)
   expect(world.filled[0]).toMatch(/For every mod the claude-mods marketplace lists/)
   expect(world.filled[0]).toMatch(/Open a new chat to see the changes/)
+})
+
+test('Dragon Panel is listed with its version and switch, and Update tracks it', async ($, on) => {
+  const published = installed()
+  published['clean-view']!.version = '0.1.2'
+  published['prompt-upgrade']!.version = '0.1.1'
+  published['dragon-panel'] = { isEnabled: true, version: '0.2.1', options: [] }
+  const world = await boot($, on, published, {
+    '/.claude-plugin/marketplace.json': JSON.stringify({
+      plugins: [
+        { name: 'clean-view', source: './Clean_View' },
+        { name: 'prompt-upgrade', source: './Prompt_Upgrade' },
+        { name: 'dragon-panel', source: './Dragon_Panel' },
+      ],
+    }),
+    '/Clean_View/.claude-plugin/plugin.json': '{"version":"0.1.2"}',
+    '/Prompt_Upgrade/.claude-plugin/plugin.json': '{"version":"0.1.1"}',
+    '/Dragon_Panel/.claude-plugin/plugin.json': '{"version":"0.2.1"}',
+  })
+  const ui = await draw($)
+  await ui.press({ key: 'pick-dragon-panel' })
+  const text = await allText(ui)
+  expect(text).toMatch(/Dragon Panel · v0\.2\.1/)
+  expect(text).toMatch(/Commands: \/dragon, \/dragon on, \/dragon off/)
+  await ui.press({ key: 'switch-dragon-panel-off' })
+  expect(world.runs).toEqual(['/dragon off'])
+
+  // Its version matches GitHub's, so Update no longer offers it.
+  await ui.press({ key: 'update' })
+  expect(await allText(ui)).toMatch(/Everything is up to date/)
+  expect(world.filled).toEqual([])
+  await ui.unmount()
 })

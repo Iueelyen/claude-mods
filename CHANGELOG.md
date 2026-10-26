@@ -2,7 +2,7 @@
 
 Every change to a mod raises its version (in its `.claude-plugin/plugin.json` and the `VERSION` line in its code) and adds a line here. Newest first.
 
-To see which version a PC is running: open `/mods` (the version shows next to each mod's name), or type `/simple version`, `/better version`, `/meter version`, `/reflect version`, `/team version`, `/mycommands version` or `/mods version`.
+To see which version a PC is running: open `/mods` (the version shows next to each mod's name), or type `/simple version`, `/better version`, `/meter version`, `/reflect version`, `/team version`, `/mycommands version`, `/dragon version` or `/mods version`.
 
 ## Clean View (`clean-view`)
 
@@ -57,7 +57,18 @@ To see which version a PC is running: open `/mods` (the version shows next to ea
 ### 0.1.0 (2026-10-24)
 - First release: your own slash commands in every chat, one instructions file each in `library/`. `/wrapup` (CLAUDE.md rules, PROGRESS.md created or updated, README if needed, commit if there's a git repository or a plain note if not, "Safe to /clear") and a general `/todo [focus]` (colour-coded tables per milestone, next sprint; creates PROGRESS.md if missing). `/mycommands list|on|off|version`, listed in `/mods` with its version and commands.
 
+## Dragon Panel (`dragon-panel`)
+
+### 0.2.1 (2026-10-25)
+- Reports its version to the Mods menu (`/dragon version`), and gets an on/off switch (`/dragon on|off`, also in `/mods`). Off: it no longer opens by itself or reads in the background; `/dragon` still opens it. On is the default; the panel works exactly as before.
+
+### 0.2.0 (2026-10-25)
+- Moved into this repository from the Azure Dragon project, with its types and test (the test uses made-up tenants, servers and numbers). Calls the Azure Dragon PowerShell module by its full path, so it only works on a PC with that repo.
+
 ## Mods menu (`mod-menu`)
+
+### 0.4.1 (2026-10-25)
+- Lists Dragon Panel with its version and switch, so the Update button tracks it like the others.
 
 ### 0.4.0 (2026-10-24)
 - An **Update** button: compares GitHub with the versions loaded in this chat and puts an update prompt (what to install, what to update, the versions to expect) in the prompt box, unsent. A notice and the prompt's last line both say to open a new chat to see the changes. Says so when everything is current; falls back to a check-everything prompt when GitHub can't be reached.

@@ -1,6 +1,6 @@
 // Tests for the Dragon control panel (D-02). process.run is faked with made-up panel data,
 // so no PowerShell runs and nothing touches Azure.
-import { expect, test } from 'claude-code/testing'
+import { expect, mock, test } from 'claude-code/testing'
 
 const PANE = {
   plugin: 'dragon-panel',
@@ -112,4 +112,48 @@ test('a failed read shows the error instead of stale lights', async ($, on) => {
   const ui = await $.ui.mount({ ...PANE, surface: 'desktop' })
   expect(await ui.find({ type: 'Text', text: /No inventory yet/ })).toBeTruthy()
   await ui.unmount()
+})
+
+test('version and the on/off switch for the Mods menu', async ($, on) => {
+  const ran: string[][] = []
+  const opened: string[] = []
+  const published: Record<string, unknown> = {}
+  mock.store(on, { isEnabled: false })
+  on('state.set', (_, e, next) => {
+    const w = e as { plugin: string; key: string; value: unknown }
+    if (w.plugin === 'dragon-panel') published[w.key] = w.value
+    return next(e)
+  })
+  on('command.register', () => ({ value: { command: 'dragon' } }))
+  on('ui.open', (_, e) => {
+    opened.push(e.id)
+    return { value: { isPlaced: true } }
+  })
+  on('clock.every', () => ({ value: {} }))
+  on('process.run', (_, e) => {
+    ran.push([...e.argv])
+    return { value: { exitCode: 0, stdout: JSON.stringify(DATA), stderr: '' } }
+  })
+  on('session.start', (_, e) => ({ cwd: e.cwd }))
+
+  // Switched off (saved from before): nothing opens or runs by itself.
+  await $.session.start({ cwd: '/', surface: 'desktop', isInteractive: true })
+  expect(published.version).toBe('0.2.1')
+  expect(published.isEnabled).toBe(false)
+  expect(opened).toEqual([])
+  expect(ran).toEqual([])
+  expect((await $.command.run({ command: 'dragon', args: 'version' })).text).toBe('Dragon Panel version 0.2.1')
+
+  // /dragon still opens it on request.
+  await $.command.run({ command: 'dragon', args: '' })
+  expect(opened).toEqual(['dragon-panel'])
+  // The read runs in the background: the panel shows its data once it's done.
+  const ui = await $.ui.mount({ ...PANE, surface: 'desktop' })
+  expect(await ui.find({ type: 'Text', text: /Contoso OT/ })).toBeTruthy()
+  await ui.unmount()
+  expect(ran.length).toBe(1)
+
+  // And the switch turns it back on.
+  expect((await $.command.run({ command: 'dragon', args: 'on' })).text).toMatch(/Dragon Panel is on/)
+  expect(published.isEnabled).toBe(true)
 })

@@ -10,9 +10,17 @@ import type { Engine, Register } from 'claude-code'
 import type { PanelData, PanelTenant, PanelView, PanelVm, ServerListUi } from '../types'
 
 const PANE = 'dragon-panel'
+const VERSION = '0.2.1' // keep in step with .claude-plugin/plugin.json
 const REPO = 'C:\\_Repos\\Azure_Dragon'
 const MODULE = `${REPO}\\scripts\\AzureDragon\\AzureDragon.psd1`
 const REFRESH_MS = 15 * 60 * 1000
+const STORE_ENABLED = 'isEnabled'
+
+// For the Mods menu: the version, the on/off switch, and options (none yet).
+// Off: the panel doesn't open by itself or read in the background; /dragon still opens it.
+const versionAtom = atom({ plugin: 'dragon-panel', key: 'version' } as const, VERSION)
+const enabledAtom = atom({ plugin: 'dragon-panel', key: 'isEnabled' } as const, true)
+const optionsAtom = atom({ plugin: 'dragon-panel', key: 'options' } as const, [])
 
 const view = atom({ plugin: 'dragon-panel', key: 'view' } as const, {
   data: null,
@@ -105,17 +113,49 @@ function certLevel(days: number | null): Level {
   return days <= 30 ? 'warn' : 'ok'
 }
 
+async function setEnabled($: Engine, value: boolean) {
+  await update($, enabledAtom, () => value)
+  await $.store.set(STORE_ENABLED, value)
+}
+
+// The background read, only while switched on.
+async function refreshIfOn($: Engine) {
+  if (await read($, enabledAtom)) await refresh($)
+}
+
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
-    await $.command.register({ name: 'dragon', description: 'Open the Azure Dragon control panel' })
-    void $.ui.open({ id: PANE, title: 'Azure Dragon' })
-    void refresh($)
-    $.clock.every(REFRESH_MS, () => void refresh($))
+    await update($, versionAtom, () => VERSION)
+    await update($, optionsAtom, () => [])
+    const saved = await $.store.get(STORE_ENABLED).catch(() => undefined)
+    const isOn = saved !== false
+    await update($, enabledAtom, () => isOn)
+    await $.command.register({
+      name: 'dragon',
+      description: 'Open the Azure Dragon control panel',
+      argumentHint: 'on | off | version',
+    })
+    if (isOn) {
+      void $.ui.open({ id: PANE, title: 'Azure Dragon' })
+      void refresh($)
+    }
+    $.clock.every(REFRESH_MS, () => void refreshIfOn($))
 
     return next(e)
   })
 
-  on('command.run', { command: 'dragon' }, async $ => {
+  on('command.run', { command: 'dragon' }, async ($, e) => {
+    const arg = e.args.trim().toLowerCase()
+    if (arg === 'version') return { text: `Dragon Panel version ${VERSION}` }
+    if (arg === 'on' || arg === 'off') {
+      await setEnabled($, arg === 'on')
+      return {
+        text:
+          arg === 'on'
+            ? 'Dragon Panel is on: it opens in each new chat and reads every 15 minutes.'
+            : "Dragon Panel is off: it won't open by itself or read in the background. /dragon still opens it.",
+      }
+    }
     await $.ui.open({ id: PANE, title: 'Azure Dragon' })
     void refresh($)
 

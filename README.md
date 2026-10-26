@@ -10,6 +10,7 @@ Mods for [Claude Code](https://claude.com/claude-code) that make it calmer and f
 | **Reflect** (`reflect`) | When you correct Claude in a lasting way, offers to save it as a rule for this project, all your projects, or a skill. | `/reflect`, `/reflect set` |
 | **Team Tracker** (`team-tracker`) | A Team pane: how far the job is, every helper Claude sends off, how long each has run and roughly what it would cost. | `/team`, `/team set` |
 | **My Commands** (`my-commands`) | Your own slash commands in every chat: `/wrapup` (save rules and progress, commit, safe to /clear) and `/todo` (everything left to do, in colour-coded tables). Add more as files in its `library` folder. | `/wrapup`, `/todo`, `/mycommands` |
+| **Dragon Panel** (`dragon-panel`) | The Azure Dragon control panel: tenant lights, servers with Connect, drift counts and the last backup. Only works on a PC that has the Azure Dragon repo at `C:\_Repos\Azure_Dragon`; elsewhere switch it off in `/mods` or skip it. | `/dragon`, `/dragon on`, `/dragon off` |
 | **Mods menu** (`mod-menu`) | A control panel: switch each mod on or off and change its options. | `/mods` |
 
 ## Install
@@ -25,6 +26,7 @@ Install once on each computer. After that, every new Claude Code session loads t
 /plugin install reflect --marketplace Iueelyen/claude-mods
 /plugin install team-tracker --marketplace Iueelyen/claude-mods
 /plugin install my-commands --marketplace Iueelyen/claude-mods
+/plugin install dragon-panel --marketplace Iueelyen/claude-mods
 /plugin install mod-menu --marketplace Iueelyen/claude-mods
 ```
 
@@ -37,8 +39,11 @@ claude plugin install usage-meter --marketplace Iueelyen/claude-mods
 claude plugin install reflect --marketplace Iueelyen/claude-mods
 claude plugin install team-tracker --marketplace Iueelyen/claude-mods
 claude plugin install my-commands --marketplace Iueelyen/claude-mods
+claude plugin install dragon-panel --marketplace Iueelyen/claude-mods
 claude plugin install mod-menu --marketplace Iueelyen/claude-mods
 ```
+
+Skip the `dragon-panel` line on a PC without the Azure Dragon repo at `C:\_Repos\Azure_Dragon`.
 
 **In the Claude desktop app** (Code tab): click **+** next to the prompt box, then **Plugins**, **Add marketplace** with `Iueelyen/claude-mods`, then add each plugin.
 
@@ -52,7 +57,7 @@ Claude Code reads the newest version from this repository. To get it right away,
 
 - `.claude-plugin/marketplace.json`: the list of mods this repository offers
 - `CHANGELOG.md`: each mod's versions and what changed
-- `Clean_View/`, `Prompt_Upgrade/`, `Usage_Meter/`, `Reflect/`, `Team_Tracker/`, `My_Commands/`, `Mods_Menu/`: one folder per mod, each with its own README
+- `Clean_View/`, `Prompt_Upgrade/`, `Usage_Meter/`, `Reflect/`, `Team_Tracker/`, `My_Commands/`, `Dragon_Panel/`, `Mods_Menu/`: one folder per mod, each with its own README
 - Each mod's tests run with `claude plugin test <mod folder>`
 
 ## License

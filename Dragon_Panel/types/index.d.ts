@@ -53,8 +53,28 @@ export type ServerListUi = {
   showAll: Record<string, boolean>
 }
 
+// One option as the Mods menu draws it (Dragon Panel has none yet; the list is published empty).
+export type DragonPanelOption = {
+  key: string
+  label: string
+  kind: 'toggle' | 'choice' | 'action'
+  value: string
+  choices?: Array<{ value: string; label: string }>
+  actionLabel?: string
+  hint?: string
+  group?: 'General' | 'Behavior' | 'Data'
+}
+
 declare module 'claude-code' {
   interface PluginState {
-    'dragon-panel': { view: PanelView; list: ServerListUi }
+    'dragon-panel': {
+      view: PanelView
+      list: ServerListUi
+      /** This mod's version, as its plugin.json states it. */
+      version: string
+      /** Off: the panel doesn't open by itself or read in the background. */
+      isEnabled: boolean
+      options: DragonPanelOption[]
+    }
   }
 }

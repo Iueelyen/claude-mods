@@ -17,7 +17,7 @@ import type { RepoMod } from './update'
 type Dollar = EngineInterface
 
 const PANE = 'mod-menu'
-const VERSION = '0.4.0' // keep in step with .claude-plugin/plugin.json
+const VERSION = '0.4.1' // keep in step with .claude-plugin/plugin.json
 
 const COLOR = {
   gold: '#F2C46D',
@@ -171,6 +171,19 @@ async function readMods($: Dollar): Promise<ModRow[]> {
       version: asVersion(await $.state.get({ plugin: 'my-commands', key: 'version' })),
       options: asOptions(await $.state.get({ plugin: 'my-commands', key: 'options' })),
       commandList: asCommandDetails(await $.state.get({ plugin: 'my-commands', key: 'commands' })),
+    },
+    {
+      id: 'dragon-panel',
+      title: 'Dragon Panel',
+      summary:
+        'Azure Dragon control panel: tenant lights, servers with Connect, drift counts and the last backup. Off: it no longer opens by itself or reads in the background; /dragon still opens it.',
+      commands: ['/dragon', '/dragon on', '/dragon off'],
+      command: 'dragon',
+      onArgs: 'on',
+      offArgs: 'off',
+      isOn: asSwitch(await $.state.get({ plugin: 'dragon-panel', key: 'isEnabled' })),
+      version: asVersion(await $.state.get({ plugin: 'dragon-panel', key: 'version' })),
+      options: asOptions(await $.state.get({ plugin: 'dragon-panel', key: 'options' })),
     },
     {
       id: 'mod-menu',
