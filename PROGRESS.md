@@ -19,7 +19,7 @@ The `claude-mods` marketplace on GitHub (`Iueelyen/claude-mods`, public), kept i
 | Mods menu | 0.4.1 | `/mods`: two-column control panel with switches, options and an Update button |
 
 ## Completed
-- 2026-10-26: Fixed the Clean View progress checklist not showing while Claude worked (0.1.3) and the same problem in Reflect's Save bar (0.1.2); tests now include Claude Code's band placeholder.
+- 2026-10-26: Fixed the Clean View progress checklist not showing while Claude worked (0.1.3) and the same problem in Reflect's Save bar (0.1.2); tests now include Claude Code's band placeholder. Chris confirmed the checklist is back in a new chat on the main PC.
 - 2026-10-25: Dragon Panel moved in from the Azure Dragon project with an anonymous test, then given a version, an on/off switch and a `/mods` row (0.2.1); Mods menu 0.4.1.
 - 2026-10-25: Mods menu Update button (0.4.0): compares GitHub with this chat and fills in an update prompt, unsent.
 - 2026-10-24: My Commands (`/wrapup`, general `/todo` with a compact layout); Team Tracker; Reflect; versions shown in `/mods`; CHANGELOG; install guide; Usage Meter added.
@@ -36,7 +36,7 @@ The `claude-mods` marketplace on GitHub (`Iueelyen/claude-mods`, public), kept i
 - The Update button compares with the versions loaded in the current chat, so it offers the same update again until a new chat is opened (harmless).
 
 ## Next steps
-1. Update the Dev machine to Mods menu 0.4.1, then use the Update button there; polish, S.
+1. Update the Dev machine (Mods menu 0.4.1, Clean View 0.1.3, Reflect 0.1.2, Dragon Panel only if it has the Azure Dragon repo), then use the Update button there; polish, S.
 2. Tidy the "mod-menu+my-commands" label (My Commands 0.1.2); polish, S.
 3. Desktop button-colour fix for Prompt Upgrade's pane; fix, M (Chris to decide).
 4. Add a README to Dragon_Panel like the other mods; polish, S.

@@ -25,6 +25,7 @@ This repository is the `claude-mods` marketplace: Claude Code mods (function-hoo
 ## Every change
 - Raise the version in **both** the mod's `plugin.json` and the `VERSION` line in its code (they must match), and add a dated line to `CHANGELOG.md` (newest first).
 - Run `claude plugin validate <mod folder>` and `claude plugin test <mod folder>`; fix everything they report.
+- Bug fixes: first reproduce the bug in a test on a scratch copy (never in the live mods), fix it, then confirm the new test fails on the old code and passes on the new.
 - Commit with a descriptive message; push only when Chris says so.
 - After pushing: `claude plugin marketplace update claude-mods`, then `claude plugin update <mod>@claude-mods --scope user`, then open a new chat.
 
