@@ -8,22 +8,24 @@ Read-only: do not edit, create or commit any file, except the one case in step 1
 Optional focus from the person (blank = everything): $ARGUMENTS
 
 ## 1. Read the sources fresh (never answer from memory: the list changes every session)
-- `PROGRESS.md` in the project folder (where things stand, next steps).
+- The project's progress file (where things stand, next steps): `PROGRESS.md` in the project folder, or the file the project's CLAUDE.md names as its progress file (for example `BACKLOG.md`).
 - The project's backlog or to-do list, if there is one: look for files such as `BACKLOG.md`, `TODO.md`, `ROADMAP.md`, or a backlog / roadmap file under `docs`. If a backlog has a separate "done" archive, skip the archive.
+- Always skip `docs/progress-archive.md`: it is history moved there by /wrapup, not to-do items.
 - The newest session or handoff note, if the project keeps them (its "Next" section).
 - The project's current version, if it has one (`package.json`, `pyproject.toml`, a VERSION file, the latest git tag, or the changelog).
 
-**If there is no PROGRESS.md**, this is the one file you may create. Make it in this layout, filled in from what you can find (README, git history, TODO / FIXME notes in the code, open issues if visible), tell the person you created it, then carry on:
+**If there is no progress file** (no PROGRESS.md and none named in CLAUDE.md), PROGRESS.md is the one file you may create. Make it in this layout, filled in from what you can find (README, git history, TODO / FIXME notes in the code, open issues if visible), tell the person you created it, then carry on:
 
 ```
 # Progress
 
 > What this file is for: the running record of where this project stands. Claude reads it at the start
 > of work and updates it at the end of each session (/wrapup), and /todo builds the to-do list from it.
-> Keep it current; keep finished history short.
+> Keep it current; keep finished history short (older entries move to docs/progress-archive.md).
 
 ## Current state
 ## Completed
+### Milestones
 ## In progress / unfinished
 ## Known bugs
 ## Next steps

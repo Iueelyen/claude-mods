@@ -57,6 +57,10 @@ To see which version a PC is running: open `/mods` (the version shows next to ea
 
 ## My Commands (`my-commands`)
 
+### 0.1.2 (2026-10-31)
+- `/wrapup` keeps the progress file short: only the last 3 dated entries stay in "Completed" (older ones move word for word to `docs/progress-archive.md`), a one-line-per-date "Milestones" list, one line per feature in "Current state", and open work is never archived. It reports how many entries moved and the word count before and after. It uses the progress file the project names (such as `BACKLOG.md`) instead of always PROGRESS.md.
+- `/todo` skips `docs/progress-archive.md` and reads the progress file the project names.
+
 ### 0.1.1 (2026-10-24)
 - `/todo` has a compact new layout: a summary line (items left by kind, estimated work), one ordered table with milestone, kind and a coloured effort bar (🟩 S, 🟨 M, 🟧 M-L, 🟥 L, ⬜ ?), then one line each for the next sprint and the sprints after it. No icons, no legend.
 

@@ -6,7 +6,7 @@ Your own slash commands, in every Claude Code chat on every computer where this 
 
 | Command | What it does |
 |---|---|
-| `/wrapup` | End-of-session wrap-up: adds new lasting rules to CLAUDE.md, brings PROGRESS.md up to date (creating it in a standard layout if missing), updates README.md if needed, then commits to git if the project is in a repository (and says so and skips it if not). Ends with "Safe to /clear". |
+| `/wrapup` | End-of-session wrap-up: adds new lasting rules to CLAUDE.md, brings PROGRESS.md (or the progress file the project names) up to date, creating it in a standard layout if missing, and keeps it short: only the last 3 dated entries stay, older ones move word for word to `docs/progress-archive.md`, and it reports the word count before and after. Then it updates README.md if needed, then commits to git if the project is in a repository (and says so and skips it if not). Ends with "Safe to /clear". |
 | `/todo [focus]` | Everything left to do on the project: a summary line (items left by kind, estimated work), one ordered table with milestone, kind and a coloured effort bar, then the next sprint and the ones after it. Read-only, except that it creates PROGRESS.md if the project has none. |
 
 `/mycommands` lists them; `/mycommands on` / `off` switches them all; `/mycommands version` shows the version. My Commands is also in `/mods`.
