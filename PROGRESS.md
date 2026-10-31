@@ -19,6 +19,7 @@ The `claude-mods` marketplace on GitHub (`Iueelyen/claude-mods`, public), kept i
 | Mods menu | 0.4.1 | `/mods`: two-column control panel with switches, options and an Update button |
 
 ## Completed
+- 2026-10-27: Looked into Usage Meter "not showing": code and settings were fine; the line appeared after Claude's first reply in the chat. Wrote Chris a paste-in prompt describing `/todo` and `/wrapup` for another project. No code changes.
 - 2026-10-26: Fixed the Clean View progress checklist not showing while Claude worked (0.1.3) and the same problem in Reflect's Save bar (0.1.2); tests now include Claude Code's band placeholder. Chris confirmed the checklist is back in a new chat on the main PC.
 - 2026-10-25: Dragon Panel moved in from the Azure Dragon project with an anonymous test, then given a version, an on/off switch and a `/mods` row (0.2.1); Mods menu 0.4.1.
 - 2026-10-25: Mods menu Update button (0.4.0): compares GitHub with this chat and fills in an update prompt, unsent.
@@ -30,6 +31,7 @@ The `claude-mods` marketplace on GitHub (`Iueelyen/claude-mods`, public), kept i
 - The old `mods\dragon-panel` folder in the Azure Dragon project is to be removed in that project's own chat (the copy here is the one that loads now).
 
 ## Known bugs
+- In the desktop app, Usage Meter's line may not appear until after Claude's first reply in a chat (`/meter` before then shows nothing); likely how the app draws status lines, not confirmed.
 - Command output labels show two mods (for example "mod-menu+my-commands") because My Commands checks every command typed; cosmetic only.
 - Prompt Upgrade's pane loses its button colours on the desktop app (colour inside Buttons); Chris chose to leave it for now.
 - Right after a push, GitHub's raw files can lag a few minutes, so the Update button may briefly see old versions.
@@ -41,6 +43,7 @@ The `claude-mods` marketplace on GitHub (`Iueelyen/claude-mods`, public), kept i
 3. Desktop button-colour fix for Prompt Upgrade's pane; fix, M (Chris to decide).
 4. Add a README to Dragon_Panel like the other mods; polish, S.
 5. Try `/todo` and `/wrapup` in a real project and adjust their output; polish, S.
+6. Usage Meter showing before the first reply: check how the desktop app draws status lines, then decide whether a change is worth it; needs a decision, ?.
 
 ## Decisions
 - One folder per mod; every mod has a version, an on/off switch and a `/mods` row; the Mods menu keeps no settings of its own.
